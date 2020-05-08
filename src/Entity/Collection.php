@@ -23,7 +23,7 @@ class Collection
     private $name;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Publisher::class, inversedBy="collections")
+     * @ORM\ManyToOne(targetEntity=Publisher::class)
      * @ORM\JoinColumn(nullable=false)
      */
     private $publisher;
