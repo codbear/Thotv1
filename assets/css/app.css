@@ -1,0 +1,63 @@
+body {
+    padding-top: 74px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    text-transform: uppercase;
+    font-family: 'Oregano', cursive;
+}
+
+.navbar-brand {
+    font-weight: bold;
+    margin-bottom: 0;
+    font-size: xx-large;
+}
+
+.card-deck {
+    justify-content: space-around;
+}
+
+.card-deck .card {
+    flex: 0 0 auto;
+    margin: 0 0 2% 0;
+}
+
+.card-deck .card img {
+    padding: 2% 10% 0 10%;
+}
+
+.card-deck .card .card-footer {
+    font-family: 'Oregano', cursive;
+    font-size: large;
+}
+
+@media (min-width: 1200px) {
+    .card-deck .card {
+        width: 22%;
+    }
+}
+
+@media (max-width: 1199px) {
+    .card-deck .card {
+        width: 30%;
+    }
+}
+
+@media (max-width: 991px) {
+    .card-deck .card {
+        width: 45%;
+    }
+}
+
+@media (max-width: 767px) {
+    .card-deck .card {
+        width: 70%;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
