@@ -19,7 +19,6 @@ class ModalBox {
         this.closeBtn.addEventListener('click', this.closeBox, {once: true});
         window.addEventListener('keydown', this.listenKeyboard);
         this.contentWrapper.addEventListener('click', this.stopPropagation);
-        this.isHidden = false;
     }
 
     closeBox(event) {
@@ -28,7 +27,6 @@ class ModalBox {
         this.toggleBox();
         window.removeEventListener('keydown', this.listenKeyboard);
         this.contentWrapper.removeEventListener('click', this.stopPropagation);
-        this.isHidden = true;
         this.onClose()
     }
 
@@ -46,13 +44,17 @@ class ModalBox {
 
     toggleBox() {
         if (this.modalBox.style.display === 'none') {
-            this.modalBox.style.removeProperty('display');
             this.modalBox.removeAttribute('aria-hidden');
             this.modalBox.setAttribute('aria-modal', 'true');
+            this.modalBox.style.removeProperty('display');
+            this.isHidden = false;
         } else {
-            this.modalBox.style.display = 'none';
-            this.modalBox.removeAttribute('aria-modal');
             this.modalBox.setAttribute('aria-hidden', 'true');
+            this.modalBox.removeAttribute('aria-modal');
+            this.modalBox.addEventListener('animationend', () => {
+                this.modalBox.style.display = 'none';
+                this.isHidden = true;
+            }, {once: true});
         }
     }
 
