@@ -10,7 +10,7 @@
     <div class="container-fluid">
         <div class="card-deck mt-3">
             {% for book in books %}
-                <div class="card book-card mb-trigger" data-bookid="{{ book.id }}">
+                <div class="card book-card" data-bookid="{{ book.id }}">
                     <img src="{{ asset('img/book_cover_placeholder.png') }}" alt="" class="card-img-top">
                     <div class="card-body text-dark">
                         <div class="card-title">{{ book.title }}</div>
