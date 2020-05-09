@@ -25,6 +25,7 @@ h6 {
 .card-deck .card {
     flex: 0 0 auto;
     margin: 0 0 2% 0;
+    cursor: pointer;
 }
 
 .card-deck .card img {

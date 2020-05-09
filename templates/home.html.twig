@@ -2,11 +2,15 @@
 
 {% block title 'Ma bibliothèque' %}
 
+{% block stylesheets %}
+    {{ encore_entry_link_tags('homepage') }}
+{% endblock %}
+
 {% block body %}
     <div class="container-fluid">
         <div class="card-deck mt-3">
             {% for book in books %}
-                <div class="card">
+                <div class="card book-card mb-trigger" data-bookid="{{ book.id }}">
                     <img src="{{ asset('img/book_cover_placeholder.png') }}" alt="" class="card-img-top">
                     <div class="card-body text-dark">
                         <div class="card-title">{{ book.title }}</div>
@@ -19,5 +23,10 @@
                 </div>
             {% endfor %}
         </div>
+        {{ include('_book_show_box.html.twig') }}
     </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('homepage') }}
 {% endblock %}
