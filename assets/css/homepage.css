@@ -20,6 +20,8 @@
     margin-top: 74px;
     padding: 20px;
     display: flex;
+    justify-content: center;
+    align-items: flex-start;
     overflow: auto;
     width: calc(100vw - 15%);
     height: calc(100vh - 15%);
@@ -51,11 +53,6 @@
 
 .modal-box[aria-hidden="true"] .mb-wrapper {
     animation-name: slideToBottom;
-}
-
-.mb-content,
-.mb-error {
-    margin: auto;
 }
 
 .mb-error-message {
