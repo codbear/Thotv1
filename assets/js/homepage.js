@@ -4,7 +4,7 @@ import '../css/homepage.css'
 
 const $mbWrapper = document.querySelector('.mb-wrapper');
 const modalBox = new ModalBox(document.querySelector('.modal-box'))
-const book = new Book($mbWrapper);
+const book = new Book(modalBox);
 const $bookCardsCollection = document.querySelectorAll('.book-card');
 
 $bookCardsCollection.forEach(($bookCard) => {

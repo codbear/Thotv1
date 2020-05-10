@@ -2,13 +2,14 @@ import {Ajax} from "./Ajax";
 
 class Book {
 
-    constructor($modalBoxWrapper) {
+    constructor(modalBox) {
         this.modalBox = {};
         this.details = {};
-        this.modalBox.$wrapper = $modalBoxWrapper;
-        this.modalBox.$loader = $modalBoxWrapper.querySelector('.mb-loader');
-        this.modalBox.$error = $modalBoxWrapper.querySelector('.mb-error');
-        this.modalBox.$content = $modalBoxWrapper.querySelector('.mb-content');
+        this.modalBox.$wrapper = modalBox.contentWrapper;
+        this.modalBox.$loader = this.modalBox.$wrapper.querySelector('.mb-loader');
+        this.modalBox.$error = this.modalBox.$wrapper.querySelector('.mb-error');
+        this.modalBox.$content = this.modalBox.$wrapper.querySelector('.mb-content');
+        this.closeBox = modalBox.closeBox;
     }
 
     resetContent() {
@@ -41,12 +42,19 @@ class Book {
             ? 'La requête n\'a pas abouti, veuillez vérifier votre connexion.'
             : 'Une erreur est survenue, merci de réessayer ultérieurement.'
 
-        this.modalBox.$tryAgainButton = document.createElement('button');
-        this.modalBox.$tryAgainButton.textContent = "Réessayer";
-        this.modalBox.$tryAgainButton.addEventListener('click', () => this.fetch(this.bookId));
+        this.modalBox.$tryAgainBtn = document.createElement('button');
+        this.modalBox.$tryAgainBtn.textContent = "Réessayer";
+        this.modalBox.$tryAgainBtn.classList.add('btn', 'btn-primary');
+        this.modalBox.$tryAgainBtn.addEventListener('click', () => this.fetch(this.bookId));
+
+        this.modalBox.$closeBtn = document.createElement('button');
+        this.modalBox.$closeBtn.textContent = "Fermer";
+        this.modalBox.$closeBtn.classList.add('btn', 'btn-dark');
+        this.modalBox.$closeBtn.addEventListener('click', this.closeBox, {once: true});
 
         this.modalBox.$errorWrapper.appendChild(this.modalBox.$errorMessage);
-        this.modalBox.$errorWrapper.appendChild(this.modalBox.$tryAgainButton);
+        this.modalBox.$errorWrapper.appendChild(this.modalBox.$tryAgainBtn);
+        this.modalBox.$errorWrapper.appendChild(this.modalBox.$closeBtn);
 
         this.modalBox.$loader.style.display = 'none';
 
