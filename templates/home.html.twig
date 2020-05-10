@@ -6,6 +6,10 @@
     {{ encore_entry_link_tags('homepage') }}
 {% endblock %}
 
+{% block actionsBtn %}
+    <a href="{{ path('book_new') }}" title="Ajouter un livre"><i class="far fa-plus-square fa-2x text-dark"></i></a>
+{% endblock %}
+
 {% block body %}
     <div class="container-fluid">
         <div class="card-deck mt-3">
