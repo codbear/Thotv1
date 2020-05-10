@@ -11,16 +11,26 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 class BookController extends AbstractController
 {
     /**
-     * @Rest\Get(
-     *     path = "/api/books/{id}",
-     *     name = "book_show",
-     * )
      * @Rest\View()
+     * @Rest\Get("/api/books/{id}")
      * @param Book $book
      * @return BookViewModel
      */
     public function show(Book $book)
     {
         return new BookViewModel($book);
+    }
+
+    /**
+     * @Rest\View(StatusCode = 204)
+     * @Rest\Delete("/api/books/{id}")
+     * @param Book $book
+     */
+    public function delete(Book $book)
+    {
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->remove($book);
+        $entityManager->flush();
+        return;
     }
 }

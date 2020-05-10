@@ -5,7 +5,7 @@ fos_rest:
       - { path: '^/api', priorities: [ 'json' ], fallback_format: json, prefer_extension: true }
       - { path: '^/', priorities: [ 'html', '*/*'], fallback_format: ~, prefer_extension: true }
   #    param_fetcher_listener:  true
-  #    allowed_methods_listener:  true
+  allowed_methods_listener:  true
   #    routing_loader: true
   view:
     formats: { json: true, xml: false, rss: false }

@@ -18,7 +18,7 @@ class Ajax {
     setMethod(method) {
         method = method.toUpperCase();
         const authoMethods = ['GET', 'POST', 'PUT', 'DELETE'];
-        if (authoMethods.contains(method)) {
+        if (authoMethods.includes(method)) {
             this.options.method = method;
         }
     }
@@ -46,29 +46,32 @@ class Ajax {
         }
     }
 
-    execute(onSuccess, onError) {
+    execute(onSuccess, onError = () => {
+    }) {
         if (!this.url) {
             return;
         }
-        let errorCallback = onError || function () {
-        };
         this.xhr.open(this.options.method, this.url, this.options.async);
         this.xhr.onreadystatechange = function () {
             if (this.readyState !== 4) {
                 return;
             }
             if (this.status >= 400) {
-                return errorCallback(this.status, this.statusText);
+                return onError(this.status, this.statusText);
             }
-            if (this.status === 0) {
-                if (this.statusText === 'abort' || this.statusText === 'aborted' || this.statusText === '') {
-                    return errorCallback(this.status, 'aborted');
-                }
-                return errorCallback(this.status, 'offline');
+            switch (this.status) {
+                case 0 :
+                    if (this.statusText === 'abort' || this.statusText === 'aborted' || this.statusText === '') {
+                        return onError(this.status, 'aborted');
+                    }
+                    return onError(this.status, 'offline');
+                case 200 :
+                    const parsedDatas = JSON.parse(this.responseText);
+                    onSuccess(parsedDatas);
+                    break;
+                case 204 :
+                    onSuccess();
             }
-            const parsedDatas = JSON.parse(this.responseText);
-            onSuccess(parsedDatas);
-
         }
         if (this.options.method === 'POST') {
             this.xhr.send(this.postDatas);

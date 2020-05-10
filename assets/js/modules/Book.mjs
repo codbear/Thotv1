@@ -23,43 +23,39 @@ class Book {
         this.resetContent();
         this.bookId = bookId;
         let request = new Ajax('/api/books/' + bookId);
-        request.execute((book) => this.onSuccess(book), () => this.onError());
+        request.execute((book) => {
+            this.setDetails(book);
+            this.listenDeleteBtn();
+            this.toggleLoader();
+            this.toggleBookDetails();
+        }, (statusCode, statusText) => {
+            this.setErrorMessage('info', statusText, 'fetch');
+            this.toggleErrorMessage();
+            this.toggleLoader();
+        });
         return request;
     }
 
-    onSuccess(book) {
-        this.setDetails(book);
-        this.modalBox.$loader.style.display = 'none';
-        this.modalBox.$content.style.removeProperty('display');
+    listenDeleteBtn() {
+        let $deleteBtn = document.getElementById('book-delete');
+        $deleteBtn.addEventListener('click', (e) => {
+            this.delete(e)
+        }, {once: true})
     }
 
-    onError(statusCode, statusText) {
-        this.modalBox.$errorWrapper = document.createElement('div');
-        this.modalBox.$errorWrapper.classList.add('mb-error-message');
-
-        this.modalBox.$errorMessage = document.createElement('p');
-        this.modalBox.$errorMessage.textContent = statusText === "offline"
-            ? 'La requête n\'a pas abouti, veuillez vérifier votre connexion.'
-            : 'Une erreur est survenue, merci de réessayer ultérieurement.'
-
-        this.modalBox.$tryAgainBtn = document.createElement('button');
-        this.modalBox.$tryAgainBtn.textContent = "Réessayer";
-        this.modalBox.$tryAgainBtn.classList.add('btn', 'btn-primary');
-        this.modalBox.$tryAgainBtn.addEventListener('click', () => this.fetch(this.bookId));
-
-        this.modalBox.$closeBtn = document.createElement('button');
-        this.modalBox.$closeBtn.textContent = "Fermer";
-        this.modalBox.$closeBtn.classList.add('btn', 'btn-dark');
-        this.modalBox.$closeBtn.addEventListener('click', this.closeBox, {once: true});
-
-        this.modalBox.$errorWrapper.appendChild(this.modalBox.$errorMessage);
-        this.modalBox.$errorWrapper.appendChild(this.modalBox.$tryAgainBtn);
-        this.modalBox.$errorWrapper.appendChild(this.modalBox.$closeBtn);
-
-        this.modalBox.$loader.style.display = 'none';
-
-        this.modalBox.$error.appendChild(this.modalBox.$errorWrapper);
-        this.modalBox.$error.style.removeProperty('display');
+    delete(event) {
+        this.resetContent();
+        let request = new Ajax('/api/books/' + this.bookId);
+        request.setMethod('DELETE');
+        request.execute(() => {
+            this.closeBox(event);
+            let $bookCard = document.querySelector('[data-bookid="' + this.bookId + '"]');
+            $bookCard.style.display = 'none';
+        }, (statusCode, statusText) => {
+            this.setErrorMessage('danger', statusText, 'delete');
+            this.toggleLoader();
+            this.toggleErrorMessage();
+        });
     }
 
     setDetails(book) {
@@ -89,6 +85,62 @@ class Book {
         this.details.$hasBeenRead.textContent = book.has_been_read;
         this.details.$isDematerialized = this.modalBox.$wrapper.querySelector('.bookIsDematerialized');
         this.details.$isDematerialized.textContent = book.is_ebook;
+    }
+
+    setErrorMessage(level, message = '', tryAgain = () => {
+    }) {
+        this.modalBox.$errorWrapper = document.createElement('div');
+        this.modalBox.$errorWrapper.classList.add('mb-error-message');
+        this.modalBox.$errorMessage = document.createElement('p');
+        this.modalBox.$errorMessage.textContent = message === "offline"
+            ? 'La requête n\'a pas abouti, veuillez vérifier votre connexion.'
+            : 'Une erreur est survenue, merci de réessayer ultérieurement.'
+
+        this.modalBox.$tryAgainBtn = document.createElement('button');
+        this.modalBox.$tryAgainBtn.textContent = "Réessayer";
+        this.modalBox.$tryAgainBtn.classList.add('btn', 'btn-' + level);
+        switch (tryAgain) {
+            case 'fetch' :
+                this.modalBox.$tryAgainBtn.addEventListener('click', () => this.fetch(this.bookId));
+                break;
+            case 'delete' :
+                this.modalBox.$tryAgainBtn.addEventListener('click', (e) => this.delete(e));
+                break;
+        }
+
+        this.modalBox.$closeBtn = document.createElement('button');
+        this.modalBox.$closeBtn.textContent = "Fermer";
+        this.modalBox.$closeBtn.classList.add('btn', 'btn-dark');
+        this.modalBox.$closeBtn.addEventListener('click', this.closeBox, {once: true});
+
+        this.modalBox.$errorWrapper.appendChild(this.modalBox.$errorMessage);
+        this.modalBox.$errorWrapper.appendChild(this.modalBox.$tryAgainBtn);
+        this.modalBox.$errorWrapper.appendChild(this.modalBox.$closeBtn);
+        this.modalBox.$error.appendChild(this.modalBox.$errorWrapper);
+    }
+
+    toggleLoader() {
+        if (this.modalBox.$loader.style.display === 'none') {
+            this.modalBox.$loader.style.removeProperty('display');
+        } else {
+            this.modalBox.$loader.style.display = 'none';
+        }
+    }
+
+    toggleErrorMessage() {
+        if (this.modalBox.$error.style.display === 'none') {
+            this.modalBox.$error.style.removeProperty('display');
+        } else {
+            this.modalBox.$error.style.display = 'none';
+        }
+    }
+
+    toggleBookDetails() {
+        if (this.modalBox.$content.style.display === 'none') {
+            this.modalBox.$content.style.removeProperty('display');
+        } else {
+            this.modalBox.$content.style.display = 'none';
+        }
     }
 }
 
