@@ -203,6 +203,9 @@
             "config/packages/sensio_framework_extra.yaml"
         ]
     },
+    "simplehtmldom/simplehtmldom": {
+        "version": "2.0-rc2"
+    },
     "symfony/apache-pack": {
         "version": "1.0",
         "recipe": {
