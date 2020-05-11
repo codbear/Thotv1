@@ -1,4 +1,4 @@
-import {Ajax} from "./Ajax";
+import Ajax from "./Ajax";
 
 class Book {
 
@@ -144,4 +144,4 @@ class Book {
     }
 }
 
-export {Book};
+export default Book;

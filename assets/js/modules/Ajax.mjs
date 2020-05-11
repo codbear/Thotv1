@@ -81,4 +81,4 @@ class Ajax {
     }
 }
 
-export {Ajax};
+export default Ajax;

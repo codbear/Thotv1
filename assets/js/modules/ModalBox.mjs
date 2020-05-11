@@ -60,7 +60,7 @@ class ModalBox {
 
     lockUpFocus(event) {
         event.preventDefault();
-        let index = this.focusableElements.findIndex(f => f === this.modalBox.querySelector(':focus'));
+        let index = this.focusableElements.findIndex(f => f === document.activeElement);
         if (event.shiftKey) {
             index--;
         } else {
@@ -75,4 +75,4 @@ class ModalBox {
     }
 }
 
-export {ModalBox};
+export default ModalBox;

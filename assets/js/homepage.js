@@ -1,6 +1,6 @@
-import {Book} from './modules/Book.mjs';
-import {ModalBox} from "./modules/ModalBox";
-import '../css/homepage.css'
+import Book from "./modules/Book";
+import ModalBox from "./modules/ModalBox";
+import "../css/homepage.css";
 
 const $mbWrapper = document.querySelector('.mb-wrapper');
 const modalBox = new ModalBox(document.querySelector('.modal-box'))
