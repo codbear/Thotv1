@@ -2,6 +2,10 @@
 
 {% block title 'Ajouter un livre' %}
 
+{% block stylesheets %}
+    {{ encore_entry_link_tags('newBook') }}
+{% endblock %}
+
 {% block actionsBtn %}
     <a href="{{ path('home') }}" title="Accueil"><i class="fas fa-home fa-2x text-dark"></i></a>
 {% endblock %}
@@ -15,7 +19,6 @@
     </div>
 {% endblock %}
 
-{% block javascript %}
-    <script src="{{ asset('scripts/models/AjaxRequest.js') }}"></script>
-    <script src="{{ asset('scripts/isbnSearch.js') }}"></script>
+{% block javascripts %}
+    {{ encore_entry_script_tags('newBook') }}
 {% endblock %}

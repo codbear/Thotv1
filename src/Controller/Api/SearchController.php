@@ -16,7 +16,7 @@ class SearchController extends AbstractController
 
     /**
      * @Rest\View();
-     * @Rest\Get("/api/search/external/{isbn})
+     * @Rest\Get("/api/search/external/{isbn}")
      * @param $isbn
      * @param SerializerInterface $serializer
      * @param FetchBookDetailsFromGoogle $googleFetcher
