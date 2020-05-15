@@ -1,0 +1,43 @@
+.navbar.navbar-vertical-left {
+    width: 20vw;
+    position: fixed;
+    top: 74px;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.navbar-nav,
+.nav-item {
+    width: 100%;
+}
+
+.navbar-nav {
+    margin-top: 5%;
+}
+
+.nav-item {
+    padding: 5%;
+    border-bottom: 1px solid #F8F9FA;
+}
+
+.nav-link {
+    text-decoration: none;
+}
+
+#dashboard {
+    margin-left: 20vw;
+    padding: 2% 0;
+}
+
+#dashboard button {
+    width: 50px;
+}
+
+.actions-btn button:first-of-type {
+    margin-right: 10px;
+}

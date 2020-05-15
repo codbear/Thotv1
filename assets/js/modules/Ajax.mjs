@@ -39,8 +39,7 @@ class Ajax {
             return
         }
         if (isJson) {
-            this.xhr.setRequestHeader('Content-Type', 'application/json');
-            this.postDatas = JSON.stringify(postDatas);
+            this.postJsonDatas = JSON.stringify(postDatas);
         } else {
             this.postDatas = new FormData(postDatas);
         }
@@ -52,6 +51,7 @@ class Ajax {
             return;
         }
         this.xhr.open(this.options.method, this.url, this.options.async);
+        if (this.postJsonDatas) this.xhr.setRequestHeader('Content-Type', 'application/json');
         this.xhr.onreadystatechange = function () {
             if (this.readyState !== 4) {
                 return;
@@ -59,22 +59,26 @@ class Ajax {
             if (this.status >= 400) {
                 return onError(this.status, this.statusText);
             }
-            switch (this.status) {
-                case 0 :
-                    if (this.statusText === 'abort' || this.statusText === 'aborted' || this.statusText === '') {
-                        return onError(this.status, 'aborted');
-                    }
-                    return onError(this.status, 'offline');
-                case 200 :
-                    const parsedDatas = JSON.parse(this.responseText);
-                    onSuccess(parsedDatas);
-                    break;
-                case 204 :
-                    onSuccess();
+            if (this.status === 0) {
+                if (this.statusText === 'abort' || this.statusText === 'aborted' || this.statusText === '') {
+                    return onError(this.status, 'aborted');
+                }
+                return onError(this.status, 'offline');
+            }
+            if (this.status === 200 || this.status === 201) {
+                const parsedDatas = JSON.parse(this.responseText);
+                return onSuccess(parsedDatas);
+            }
+            if (this.status === 204) {
+                return onSuccess();
             }
         }
-        if (this.options.method === 'POST') {
-            this.xhr.send(this.postDatas);
+        if (this.options.method === 'POST' || this.options.method === 'PUT') {
+            if (this.postJsonDatas) {
+                this.xhr.send(this.postJsonDatas);
+            } else {
+                this.xhr.send(this.postDatas);
+            }
         } else {
             this.xhr.send();
         }
