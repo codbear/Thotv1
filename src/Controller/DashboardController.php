@@ -25,11 +25,11 @@ class DashboardController extends AbstractController
      * @param AuthorRepository $authorRepository
      * @return Response
      */
-    public function getAuthorSection(AuthorRepository $authorRepository)
+    public function getAuthorsSection(AuthorRepository $authorRepository)
     {
-        return $this->render('dashboard/_authors.html.twig', [
-            'authors' => $authorRepository->findAll()
+        return $this->render('dashboard/_section.html.twig', [
+            'section' => 'authors',
+            'ressources' => $authorRepository->findAll(),
         ]);
     }
-
 }
