@@ -29,7 +29,7 @@ class AuthorController extends AbstractController
      * @Rest\Post("/api/authors")
      * @Rest\RequestParam(
      *     name="name",
-     *     requirements="[a-zA-Z,\ ]{3,}",
+     *     requirements="[a-zA-Z,.\-\ ]{3,}",
      *     nullable=false
      * )
      * @ParamConverter("author", converter="fos_rest.request_body")
@@ -67,7 +67,7 @@ class AuthorController extends AbstractController
      * )
      * @Rest\RequestParam(
      *     name="name",
-     *     requirements="[a-zA-Z,\ ]{3,}",
+     *     requirements="[a-zA-Z,.\-\ ]{3,}",
      *     nullable=false
      * )
      * @ParamConverter("editedAuthor", converter="fos_rest.request_body")
