@@ -3,6 +3,7 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Collection;
 use App\Entity\Publisher;
 use App\Repository\PublisherRepository;
 use App\ViewModel\PublisherDTO;
@@ -40,6 +41,12 @@ class PublisherController extends AbstractController
     {
         $em = $this->getDoctrine()->getManager();
         $em->persist($publisher);
+        $em->flush();
+
+        $collection = new Collection();
+        $collection->setName('Hors collection');
+        $collection->setPublisher($publisher);
+        $em->persist($collection);
         $em->flush();
 
         return new PublisherDTO($publisher);
