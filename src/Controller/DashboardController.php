@@ -5,6 +5,7 @@ namespace App\Controller;
 
 
 use App\Repository\AuthorRepository;
+use App\Repository\PublisherRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,6 +31,19 @@ class DashboardController extends AbstractController
         return $this->render('dashboard/_section.html.twig', [
             'section' => 'authors',
             'ressources' => $authorRepository->findAll(),
+        ]);
+    }
+
+    /**
+     * @Route("/dashboard/publishers", name="publishers_dashboard")
+     * @param PublisherRepository $publisherRepository
+     * @return Response
+     */
+    public function getPublishersSection(PublisherRepository $publisherRepository)
+    {
+        return $this->render('dashboard/_section.html.twig', [
+            'section' => 'publishers',
+            'ressources' => $publisherRepository->findAll(),
         ]);
     }
 }
