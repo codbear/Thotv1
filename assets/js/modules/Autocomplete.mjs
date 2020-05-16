@@ -69,16 +69,11 @@ class Autocomplete {
         const $dropdown = document.createElement("ul");
         $dropdown.classList.add("autocomplete-dropdown", "bg-light");
         this.$input.parentNode.appendChild($dropdown);
-
-        for (let key in this.datas) {
-            if (this.datas.hasOwnProperty(key) && key.toLowerCase().indexOf(inputValue) !== -1) {
-                let entry = {
-                    id: this.datas[key],
-                    name: key
-                };
+        this.datas.forEach((entry) => {
+            if (entry.name.toLowerCase().indexOf(inputValue) !== -1) {
                 this.matchingEntries.push(entry);
             }
-        }
+        })
 
         for (let i = 0; i < this.matchingEntries.length; i++) {
             let entry = this.matchingEntries[i];
@@ -88,6 +83,7 @@ class Autocomplete {
             $autocompleteOption.textContent = entry.name;
             $autocompleteOption.addEventListener('click', (e) => {
                 this.$input.value = entry.name;
+                this.$input.dataset.ressourceId = entry.id;
                 this.resetDropdown();
             }, {once: true});
             $dropdown.appendChild($autocompleteOption);
