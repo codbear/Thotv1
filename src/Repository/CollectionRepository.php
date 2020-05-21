@@ -19,22 +19,20 @@ class CollectionRepository extends ServiceEntityRepository
         parent::__construct($registry, Collection::class);
     }
 
-    // /**
-    //  * @return Collection[] Returns an array of Collection objects
-    //  */
-    /*
-    public function findByExampleField($value)
+    /**
+     * @param $publisherId
+     * @return Collection[] Returns an array of Collection objects
+     */
+
+    public function findByPublisher($publisherId)
     {
         return $this->createQueryBuilder('c')
-            ->andWhere('c.exampleField = :val')
-            ->setParameter('val', $value)
-            ->orderBy('c.id', 'ASC')
-            ->setMaxResults(10)
+            ->andWhere('c.publisher = :val')
+            ->setParameter('val', $publisherId)
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
-    */
+
 
     /*
     public function findOneBySomeField($value): ?Collection

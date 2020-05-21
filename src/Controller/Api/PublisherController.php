@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Collection;
 use App\Entity\Publisher;
+use App\Repository\CollectionRepository;
 use App\Repository\PublisherRepository;
 use App\ViewModel\PublisherDTO;
 use FOS\RestBundle\Controller\Annotations as Rest;
@@ -37,7 +38,7 @@ class PublisherController extends AbstractController
      * @param Publisher $publisher
      * @return PublisherDTO
      */
-    public function new(Publisher $publisher)
+    public function create(Publisher $publisher)
     {
         $em = $this->getDoctrine()->getManager();
         $em->persist($publisher);
@@ -61,7 +62,7 @@ class PublisherController extends AbstractController
      * @param Publisher $publisher
      * @return PublisherDTO
      */
-    public function show(Publisher $publisher)
+    public function read(Publisher $publisher)
     {
         return new PublisherDTO($publisher);
     }
@@ -82,7 +83,7 @@ class PublisherController extends AbstractController
      * @param Publisher $editedPublisher
      * @return PublisherDTO
      */
-    public function edit(Publisher $publisher, Publisher $editedPublisher)
+    public function update(Publisher $publisher, Publisher $editedPublisher)
     {
         $publisher->setName($editedPublisher->getName());
         $this->getDoctrine()->getManager()->flush();
@@ -93,11 +94,18 @@ class PublisherController extends AbstractController
     /**
      * @Rest\View(StatusCode = 204)
      * @Rest\Delete("/api/publishers/{id}")
+     * @param int $id
      * @param Publisher $publisher
+     * @param CollectionRepository $collectionRepository
      */
-    public function delete(Publisher $publisher)
+    public function delete(int $id, Publisher $publisher, CollectionRepository $collectionRepository)
     {
         $entityManager = $this->getDoctrine()->getManager();
+
+        foreach ($collectionRepository->findByPublisher($id) as $collection) {
+            $entityManager->remove($collection);
+        }
+
         $entityManager->remove($publisher);
         $entityManager->flush();
         return;
