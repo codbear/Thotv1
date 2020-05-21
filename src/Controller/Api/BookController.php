@@ -16,7 +16,7 @@ class BookController extends AbstractController
      * @param Book $book
      * @return BookViewModel
      */
-    public function show(Book $book)
+    public function read(Book $book)
     {
         return new BookViewModel($book);
     }

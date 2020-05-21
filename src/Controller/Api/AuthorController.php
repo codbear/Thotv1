@@ -36,7 +36,7 @@ class AuthorController extends AbstractController
      * @param Author $author
      * @return AuthorDTO
      */
-    public function new(Author $author)
+    public function create(Author $author)
     {
         $em = $this->getDoctrine()->getManager();
         $em->persist($author);
@@ -54,7 +54,7 @@ class AuthorController extends AbstractController
      * @param Author $author
      * @return AuthorDTO
      */
-    public function show(Author $author)
+    public function read(Author $author)
     {
         return new AuthorDTO($author);
     }
@@ -75,7 +75,7 @@ class AuthorController extends AbstractController
      * @param Author $editedAuthor
      * @return AuthorDTO
      */
-    public function edit(Author $authorEntity, Author $editedAuthor)
+    public function update(Author $authorEntity, Author $editedAuthor)
     {
         $authorEntity->setName($editedAuthor->getName());
         $this->getDoctrine()->getManager()->flush();
