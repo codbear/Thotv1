@@ -26,21 +26,24 @@ class Autocomplete {
 
     handleInputKeydown(e) {
         this.selectAutocompleteOptions();
-
         if (this.autocompleteOptions.length > 0) {
-            if (e.keyCode === 40) {
-                e.preventDefault();
-                this.focusIndex++;
-                this.focusAutocompleteOption();
-            } else if (e.keyCode === 38) {
-                e.preventDefault();
-                this.focusIndex--;
-                this.focusAutocompleteOption();
-            } else if (e.keyCode === 13) {
-                e.preventDefault();
-                if (this.focusIndex > -1 && this.focusIndex <= this.autocompleteOptions.length) {
-                    this.autocompleteOptions[this.focusIndex].click();
-                }
+            switch (e.keyCode) {
+                case 40:
+                    e.preventDefault();
+                    this.focusIndex++;
+                    this.focusAutocompleteOption();
+                    break;
+                case 38:
+                    e.preventDefault();
+                    this.focusIndex--;
+                    this.focusAutocompleteOption();
+                    break;
+                case 13:
+                    e.preventDefault();
+                    if (this.focusIndex > -1 && this.focusIndex <= this.autocompleteOptions.length) {
+                        this.autocompleteOptions[this.focusIndex].click();
+                    }
+                    break;
             }
         }
     }
@@ -69,11 +72,7 @@ class Autocomplete {
         const $dropdown = document.createElement("ul");
         $dropdown.classList.add("autocomplete-dropdown", "bg-light");
         this.$input.parentNode.appendChild($dropdown);
-        this.datas.forEach((entry) => {
-            if (entry.name.toLowerCase().indexOf(inputValue) !== -1) {
-                this.matchingEntries.push(entry);
-            }
-        })
+        this.matchingEntries = this.datas.filter(entry => entry.name.toLowerCase().indexOf(inputValue) !== -1);
 
         for (let i = 0; i < this.matchingEntries.length; i++) {
             let entry = this.matchingEntries[i];
@@ -86,6 +85,7 @@ class Autocomplete {
                 this.$input.dataset.ressourceId = entry.id;
                 this.resetDropdown();
             }, {once: true});
+            //todo: créer un fragment qui contient les li et l'ajouter au dom après la boucle
             $dropdown.appendChild($autocompleteOption);
         }
     }

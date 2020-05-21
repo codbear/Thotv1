@@ -7,10 +7,10 @@
 {% endblock %}
 
 {% block actionsBtn %}
+    <a class="btn btn-link" href="{{ path('dashboard') }}" title="Dashboard"><i
+                class="fas fa-sliders-h fa-2x text-dark"></i></a>
     <a class="btn btn-link" href="{{ path('book_new') }}" title="Ajouter un livre"><i
                 class="fas fa-plus fa-2x text-dark"></i></a>
-    <a class="btn btn-link" href="{{ path('dashboard') }}" title="Paramètres de l'application"><i
-                class="fas fa-cog fa-2x text-dark"></i></a>
 {% endblock %}
 
 {% block body %}

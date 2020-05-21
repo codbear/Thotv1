@@ -131,7 +131,7 @@ class CollectionController extends AbstractController
 
     /**
      * @Rest\View(StatusCode = 204)
-     * @Rest\Delete("/api/collections/{collectionId}")
+     * @Rest\Delete("/api/collections/{id}")
      * @param Collection $collection
      */
     public function delete(Collection $collection)

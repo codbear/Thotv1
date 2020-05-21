@@ -1,4 +1,5 @@
 import Ajax from "./Ajax";
+import Autocomplete from "./Autocomplete";
 
 class Dashboard {
 
@@ -21,6 +22,9 @@ class Dashboard {
         const $deleteBtnList = $sectionContent.querySelectorAll('.delete-btn');
         $deleteBtnList.forEach($deleteBtn => $deleteBtn.addEventListener('click', e => this.deleteRessource(e)));
         this.dashboard.appendChild($sectionContent);
+        if (this.sectionToLoad === "collections") {
+            this.setupAutocompleteField();
+        }
     }
 
     async fetchSection() {
@@ -31,37 +35,59 @@ class Dashboard {
 
     addRessource(e) {
         e.preventDefault();
-        const url = '/api/' + this.sectionToLoad;
-        const $newAuthorInput = document.getElementById('newAuthor');
-        if ($newAuthorInput.value !== '') {
-            let request = new Ajax(url);
-            request.setMethod('POST');
-            request.setPostDatas({name: $newAuthorInput.value}, true);
-            request.execute(() => this.displaySection(this.sectionToLoad));
-        } else {
-            return this.exception('emptyInput');
+        let url;
+        const $newRessourceInput = document.getElementById('newRessource');
+        if ($newRessourceInput.value === '') return this.exception('emptyInput');
+        let postDatas = {name: $newRessourceInput.value};
+        if (this.sectionToLoad === "collections") {
+            const $newRessourceParentInput = document.getElementById('newRessourceParent');
+            if ($newRessourceParentInput.value === '') return this.exception('emptyInput');
+            let parentId = $newRessourceParentInput.dataset.ressourceId;
+            url = this.getUrl(e, 'POST', parentId);
         }
+        let request = new Ajax(url);
+        request.setMethod('POST');
+        request.setPostDatas(postDatas, true);
+        request.execute(() => this.displaySection(this.sectionToLoad));
     }
 
     editRessource(e) {
         e.preventDefault();
         let $tableRow = this.getTableRow(e);
         const url = this.getUrl(e);
+        let submitUrl;
         let request = new Ajax(url);
         request.execute((ressource) => {
             $tableRow.innerHTML = '';
 
             let $inputTd = document.createElement('td');
-            $inputTd.classList.add('col-8');
+            $inputTd.classList.add('col-8', 'col-xl-10');
             $tableRow.appendChild($inputTd);
             let $nameInput = document.createElement('input');
             $nameInput.type = 'text';
-            $nameInput.classList.add('form-control');
+            $nameInput.classList.add('form-control', 'col-xl-6');
             $nameInput.value = ressource.name;
-            $inputTd.appendChild($nameInput);
+            if (this.sectionToLoad === 'collections') {
+                let $row = document.createElement('div');
+                $row.classList.add('row');
+                $inputTd.appendChild($row);
+                $nameInput.classList.add('col-xl-6');
+                $row.appendChild($nameInput);
+
+                let $publisherInput = document.createElement('input');
+                $publisherInput.type = 'text';
+                $publisherInput.classList.add('form-control', 'col-xl-4', 'offset-xl-1');
+                $publisherInput.value = ressource.publisher.name;
+                $row.appendChild($publisherInput);
+
+                submitUrl = this.getUrl(e, 'PUT', ressource.publisher.id);
+            } else {
+                $inputTd.appendChild($nameInput);
+                submitUrl = url;
+            }
 
             let $actionsBtn = document.createElement('td');
-            $actionsBtn.classList.add('col-4', 'actions-btn');
+            $actionsBtn.classList.add('col-4', 'col-xl-2', 'actions-btn');
             $tableRow.appendChild($actionsBtn);
             let $submitBtn = document.createElement('button');
             $submitBtn.title = 'Enregistrer';
@@ -84,7 +110,7 @@ class Dashboard {
             $submitBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 if ($nameInput.value !== '') {
-                    let request = new Ajax(url);
+                    let request = new Ajax(submitUrl);
                     request.setMethod('PUT');
                     request.setPostDatas({name: $nameInput.value}, true);
                     request.execute(() => self.displaySection(self.sectionToLoad));
@@ -110,8 +136,33 @@ class Dashboard {
         })
     }
 
-    getUrl(e) {
-        return '/api/' + e.target.dataset.class + '/' + e.target.dataset.id;
+    setupAutocompleteField() {
+        const $newRessourceParentInput = document.getElementById('newRessourceParent');
+        let request = new Ajax('/api/publishers');
+        request.execute((datas) => {
+            let autocomplete = new Autocomplete($newRessourceParentInput, datas);
+        })
+    }
+
+    getUrl(e, verb = 'GET', parentId = null) {
+        switch (e.target.dataset.class) {
+            case 'collections':
+                switch (verb) {
+                    case 'PUT':
+                        return '/api/publishers/' + parentId + '/collections/' + e.target.dataset.id;
+                    case 'POST':
+                        return '/api/publishers/' + parentId + '/collections';
+                    default:
+                        return '/api/collections/' + e.target.dataset.id;
+                }
+            default:
+                switch (verb) {
+                    case 'POST':
+                        return '/api/' + e.target.dataset.class;
+                    default:
+                        return '/api/' + e.target.dataset.class + '/' + e.target.dataset.id;
+                }
+        }
     }
 
     getTableRow(e) {

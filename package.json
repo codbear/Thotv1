@@ -1,10 +1,11 @@
 {
-    "devDependencies": {
-        "@symfony/webpack-encore": "^0.29.0",
-        "core-js": "^3.0.0",
-      "regenerator-runtime": "^0.13.2",
-      "webpack-notifier": "^1.6.0"
-    },
+  "devDependencies": {
+    "@babel/preset-react": "^7.9.4",
+    "@symfony/webpack-encore": "^0.29.0",
+    "core-js": "^3.0.0",
+    "regenerator-runtime": "^0.13.2",
+    "webpack-notifier": "^1.6.0"
+  },
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
@@ -16,6 +17,9 @@
   "dependencies": {
     "bootstrap": "^4.4.1",
     "jquery": "^3.5.1",
-    "popper.js": "^1.16.1"
+    "popper.js": "^1.16.1",
+    "prop-types": "^15.7.2",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1"
   }
 }

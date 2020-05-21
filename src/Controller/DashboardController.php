@@ -5,6 +5,7 @@ namespace App\Controller;
 
 
 use App\Repository\AuthorRepository;
+use App\Repository\CollectionRepository;
 use App\Repository\PublisherRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,6 +45,19 @@ class DashboardController extends AbstractController
         return $this->render('dashboard/_section.html.twig', [
             'section' => 'publishers',
             'ressources' => $publisherRepository->findAll(),
+        ]);
+    }
+
+    /**
+     * @Route("/dashboard/collections", name="collections_dashboard")
+     * @param CollectionRepository $collectionRepository
+     * @return Response
+     */
+    public function getCollectionsSection(CollectionRepository $collectionRepository)
+    {
+        return $this->render('dashboard/_section.html.twig', [
+            'section' => 'collections',
+            'ressources' => $collectionRepository->findAll(),
         ]);
     }
 }
