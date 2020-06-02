@@ -6,6 +6,8 @@ namespace App\Controller;
 
 use App\Repository\AuthorRepository;
 use App\Repository\CollectionRepository;
+use App\Repository\FormatRepository;
+use App\Repository\GenreRepository;
 use App\Repository\PublisherRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,6 +60,32 @@ class DashboardController extends AbstractController
         return $this->render('dashboard/_section.html.twig', [
             'section' => 'collections',
             'ressources' => $collectionRepository->findAll(),
+        ]);
+    }
+
+    /**
+     * @Route("/dashboard/genres", name="genres_dashboard")
+     * @param GenreRepository $genreRepository
+     * @return Response
+     */
+    public function getGenresDashboard(GenreRepository $genreRepository)
+    {
+        return $this->render('dashboard/_section.html.twig', [
+            'section' => 'genres',
+            'ressources' => $genreRepository->findAll(),
+        ]);
+    }
+
+    /**
+     * @Route("/dashboard/formats", name="formats_dashboard")
+     * @param FormatRepository $formatRepository
+     * @return Response
+     */
+    public function getFormatsDashboard(FormatRepository $formatRepository)
+    {
+        return $this->render('dashboard/_section.html.twig', [
+            'section' => 'formats',
+            'ressources' => $formatRepository->findAll(),
         ]);
     }
 }

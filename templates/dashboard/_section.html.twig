@@ -9,17 +9,21 @@
                 <input type="text" id="newRessource" class="form-control"
                        placeholder="Ajouter un éditeur">
             {% endif %}
+            {% if section == 'genres' %}
+                <input type="text" id="newRessource" class="form-control"
+                       placeholder="Ajouter un genre">
+            {% endif %}
+            {% if section == 'formats' %}
+                <input type="text" id="newRessource" class="form-control"
+                       placeholder="Ajouter un format">
+            {% endif %}
             {% if section == 'collections' %}
                 <div class="row">
                     <div class="col-6 col-xl-7">
                         <input type="text" id="newRessource" class="form-control"
                                placeholder="Ajouter une collection">
                     </div>
-                    <div class="col-6 col-xl-5">
-                        <div class="autocomplete">
-                            <input type="text" id="newRessourceParent" class="form-control"
-                                   placeholder="Sélectionner un éditeur">
-                        </div>
+                    <div class="col-6 col-xl-5" id="newRessourceParent">
                     </div>
                 </div>
             {% endif %}
