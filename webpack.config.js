@@ -27,8 +27,6 @@ Encore
     .addEntry('homepage', './assets/js/homepage.js')
     .addEntry('newBook', './assets/js/newBook.js')
     .addEntry('appSettings', './assets/js/appSettings.js')
-    //.addEntry('page1', './assets/js/page1.js')
-    //.addEntry('page2', './assets/js/page2.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
@@ -56,8 +54,8 @@ Encore
         config.corejs = 3;
     })
 
-// enables Sass/SCSS support
-    //.enableSassLoader()
+    // enables Sass/SCSS support
+    .enableSassLoader()
 
     // uncomment if you use TypeScript
     //.enableTypeScriptLoader()
@@ -67,7 +65,7 @@ Encore
     //.enableIntegrityHashes(Encore.isProduction())
 
     // uncomment if you're having problems with a jQuery plugin
-    .autoProvidejQuery()
+    //.autoProvidejQuery()
 
     // uncomment if you use API Platform Admin (composer req api-admin)
     .enableReactPreset()
