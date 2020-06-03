@@ -1,7 +1,9 @@
 import Ajax from "./Ajax";
 import Autocomplete from "./Autocomplete";
+import React from "react";
+import ReactDom from "react-dom";
 
-class Dashboard {
+export default class Dashboard {
 
     constructor($container, sectionToLoad) {
         this.dashboard = $container;
@@ -40,10 +42,12 @@ class Dashboard {
         if ($newRessourceInput.value === '') return this.exception('emptyInput');
         let postDatas = {name: $newRessourceInput.value};
         if (this.sectionToLoad === "collections") {
-            const $newRessourceParentInput = document.getElementById('newRessourceParent');
+            const $newRessourceParentInput = document.querySelector('#newRessourceParent input');
             if ($newRessourceParentInput.value === '') return this.exception('emptyInput');
             let parentId = $newRessourceParentInput.dataset.ressourceId;
             url = this.getUrl(e, 'POST', parentId);
+        } else {
+            url = this.getUrl(e, 'POST');
         }
         let request = new Ajax(url);
         request.setMethod('POST');
@@ -137,10 +141,21 @@ class Dashboard {
     }
 
     setupAutocompleteField() {
-        const $newRessourceParentInput = document.getElementById('newRessourceParent');
+        const $container = document.getElementById('newRessourceParent');
         let request = new Ajax('/api/publishers');
         request.execute((datas) => {
-            let autocomplete = new Autocomplete($newRessourceParentInput, datas);
+            const onAutocompleteMatch = (selectedOption) => {
+                const $newRessourceParentInput = document.querySelector('#newRessourceParent input');
+                $newRessourceParentInput.dataset.ressourceId = selectedOption.id;
+            };
+            const autocompleteCreateNew = (newRessourceName) => {
+            };
+            ReactDom.render(
+                <Autocomplete
+                    options={datas}
+                    onMatch={onAutocompleteMatch}
+                    createNew={autocompleteCreateNew}/>,
+                $container);
         })
     }
 
@@ -169,5 +184,3 @@ class Dashboard {
         return e.target.parentNode.parentNode;
     }
 }
-
-export default Dashboard;

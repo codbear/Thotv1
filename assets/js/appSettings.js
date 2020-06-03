@@ -1,4 +1,4 @@
-import "../css/appSettings.css";
+import "../scss/appSettings.css";
 import Dashboard from "./modules/Dashboard";
 
 const $navLinks = document.querySelectorAll('.nav-link');
