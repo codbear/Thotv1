@@ -1,0 +1,81 @@
+.navbar.navbar-vertical-left {
+    width: 20vw;
+    position: fixed;
+    top: 74px;
+    bottom: 0;
+    left: 0;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+}
+
+.navbar-nav,
+.nav-item {
+    width: 100%;
+}
+
+.navbar-nav {
+    margin-top: 5%;
+}
+
+.nav-item {
+    padding: 5%;
+    border-bottom: 1px solid #F8F9FA;
+}
+
+.nav-link {
+    text-decoration: none;
+}
+
+#dashboard {
+    margin-left: 20vw;
+    padding: 2% 0;
+}
+
+#dashboard button {
+    width: 50px;
+}
+
+.actions-btn button:first-of-type {
+    margin-right: 10px;
+}
+
+.autocomplete {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+}
+
+.autocomplete input {
+    border-radius: .25rem .25rem 0 0;
+}
+
+.autocomplete-dropdown {
+    position: absolute;
+    z-index: 99;
+    top: 100%;
+    left: 0;
+    right: 0;
+    list-style: none;
+    padding: 0;
+    border-radius: 0 0 .25rem .25rem;
+}
+
+.autocomplete-option {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #6C757D;
+}
+
+.autocomplete-active {
+    background-color: #FFFFFF;
+    font-weight: bold;
+}
+
+#createRessource {
+    padding: 2%;
+    border: 2px solid #6C757D;
+    border-radius: 15px;
+}

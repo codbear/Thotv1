@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'Ma bibliothèque' %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('homepage') }}
+{% endblock %}
+
+{% block actionsBtn %}
+    <a class="btn btn-link" href="{{ path('dashboard') }}" title="Dashboard"><i
+                class="fas fa-sliders-h fa-2x text-dark"></i></a>
+    <a class="btn btn-link" href="{{ path('book_new') }}" title="Ajouter un livre"><i
+                class="fas fa-plus fa-2x text-dark"></i></a>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="card-deck mt-3">
+            {% for book in books %}
+                <div class="card book-card" data-bookid="{{ book.id }}">
+                    <img src="{{ asset('img/book_cover_placeholder.png') }}" alt="" class="card-img-top">
+                    <div class="card-body text-dark">
+                        <div class="card-title">{{ book.title }}</div>
+                        <div class="card-text">{{ book.author }}</div>
+                    </div>
+                    <div class="card-footer">
+                        <small class="text-muted">Fiche n°{{ book.id }} - Créée
+                            le {{ book.createdAt|date('d/m/Y') }}</small>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        {{ include('_book_show_box.html.twig') }}
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('homepage') }}
+{% endblock %}
