@@ -1,7 +1,8 @@
-import React, {useRef, useState} from 'react';
+import React, {useState} from 'react';
 import PropTypes from "prop-types";
+import '../../scss/autocomplete.scss';
 
-export default function Autocomplete({options, placeholder, required, onMatch, createNew}) {
+export default function Autocomplete({options, label, name, placeholder, required, onMatch, createNew}) {
     const [suggestions, setSuggestions] = useState({all: [], matching: null});
     const [inputValue, setInputValue] = useState('');
     const [focusIndex, setFocusIndex] = useState(-1);
@@ -60,8 +61,10 @@ export default function Autocomplete({options, placeholder, required, onMatch, c
 
     return (
         <div className="autocomplete">
+            <label htmlFor={name}>{label}</label>
             <input
                 type="text"
+                name={name}
                 placeholder={placeholder}
                 className="form-control"
                 value={inputValue}
@@ -82,11 +85,15 @@ export default function Autocomplete({options, placeholder, required, onMatch, c
 
 Autocomplete.defaultProps = {
     placeholder: '',
+    label: '',
+    name: '',
     required: false,
 }
 
 Autocomplete.propTypes = {
     options: PropTypes.array.isRequired,
+    label: PropTypes.string,
+    name: PropTypes.string,
     placeholder: PropTypes.string,
     required: PropTypes.bool,
 }
@@ -113,7 +120,6 @@ function AutocompleteDropdown({suggestedOptions, inputValue, onClick, focusIndex
 }
 
 function AutocompleteOption({value, onClick, isFocused}) {
-    const autocompleteOption = useRef(null);
     let className = 'autocomplete-option text-dark';
 
     if (isFocused) className += ' autocomplete-active';
