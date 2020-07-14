@@ -17,7 +17,7 @@ class FetchBookDetailsFromBookfinder implements BookDetailsFetcherInterface
         $book->setTitle($html->find('[itemprop=name]', 0)->plaintext ?? null);
         $book->setAuthor($html->find('[itemprop=author]', 0)->plaintext ?? null);
         $book->setDescription($html->find('[itemprop=description]', 0)->plaintext ?? null);
-        $publisher = $html->find('[itemprop=publisher]', 0)->plaintext;
+        $publisher = $html->find('[itemprop=publisher]', 0)->plaintext ?? null;
 
         if ($publisher) {
             $explodedPublisherString = explode(",", $publisher);

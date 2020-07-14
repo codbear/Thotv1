@@ -10,6 +10,8 @@ import IsbnFetcherInput from '../isbn-fetcher-input/IsbnFetcherInput';
 import {Loader} from '../../../loader';
 import {ErrorBox} from '../../../error-box';
 
+import externalFetcher from "../../services/externalFetcher";
+
 import bookDetailsReducer from "../../reducers/bookDetailsReducer";
 
 import './styles/bookForm.scss'
@@ -18,7 +20,9 @@ export default function BookForm(props) {
     const {book} = props;
     const [bookDetails, dispatchBookDetails] = useReducer(bookDetailsReducer, book);
     const [formStatus, setFormStatus] = useState('loading');
+    const [isbnToFetch, setIsbnToFetch] = useState(undefined);
     const [errorMessage, setErrorMessage] = useState(undefined)
+    const [warningMessage, setWarningMessage] = useState(undefined)
     const [authorInputIsValid, setAuthorInputIsValid] = useState(false);
     const [genreInputIsValid, setPublisherInputIsValid] = useState(false);
     const [publisherInputIsValid, setGenreInputIsValid] = useState(false);
@@ -44,7 +48,7 @@ export default function BookForm(props) {
                 }
             }
         }
-        if (formStatus !== 'error') {
+        if (formStatus !== 'error' && formStatus !== 'fetching' && formStatus !== 'warning') {
             setFormStatus(newStatus);
         }
     }, [authorInputIsValid, genreInputIsValid, publisherInputIsValid, formStatus])
@@ -54,11 +58,11 @@ export default function BookForm(props) {
         setErrorMessage(error.message);
     }
 
-    function onErrorBoxRetry() {
+    function reloadForm() {
         setFormStatus('loading');
     }
 
-    function onErrorBoxClose() {
+    function goBackHome() {
         window.location = '/';
     }
 
@@ -66,16 +70,40 @@ export default function BookForm(props) {
 
     }
 
-    function onIsbnFetch(bookDetails) {
-        dispatchBookDetails({type: 'setBookDetails', payload: bookDetails})
+    async function onIsbnFetch(isbn) {
+        setFormStatus('fetching');
+        setIsbnToFetch(isbn);
+        try {
+            const bookDetails = await externalFetcher(isbn);
+
+            if (bookDetails.title === null) {
+                throw new Error('Aucun résultat disponible pour le numéro ISBN fourni.');
+            }
+
+            dispatchBookDetails({type: 'setBookDetails', payload: bookDetails});
+            return setFormStatus('success');
+        } catch (e) {
+            setWarningMessage(e.message);
+            setFormStatus('warning');
+        }
+    }
+
+    function fetchIsbnAgain() {
+        onIsbnFetch(isbnToFetch);
     }
 
     const statusToContent = {
+        warning: (
+            <ErrorBox
+                message={warningMessage}
+                onRetry={fetchIsbnAgain}
+                onClose={reloadForm}/>
+        ),
         error: (
             <ErrorBox
                 message={errorMessage}
-                onRetry={onErrorBoxRetry}
-                onClose={onErrorBoxClose}/>
+                onRetry={reloadForm}
+                onClose={goBackHome}/>
         ),
         default: (
             <React.Fragment>
