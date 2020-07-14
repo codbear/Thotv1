@@ -6,6 +6,7 @@ import AutocompleteInput from '../autocomplete-input/AutocompleteInput';
 import CollectionsInput from '../collections-input/CollectionsInput';
 import SubmitButton from '../buttons/SubmitButton';
 import IsbnFetcherInput from '../isbn-fetcher-input/IsbnFetcherInput';
+
 import {Loader} from '../../../loader';
 import {ErrorBox} from '../../../error-box';
 
@@ -18,30 +19,35 @@ export default function BookForm(props) {
     const [bookDetails, dispatchBookDetails] = useReducer(bookDetailsReducer, book);
     const [formStatus, setFormStatus] = useState('loading');
     const [errorMessage, setErrorMessage] = useState(undefined)
-    const [isAuthorsInputInvalid, setIsAuthorsInputInvalid] = useState(true);
-    const [isGenresInputInvalid, setIsGenresInputInvalid] = useState(true);
-    const [isPublishersInputInvalid, setIsPublishersInputInvalid] = useState(true);
+    const [authorInputIsValid, setAuthorInputIsValid] = useState(false);
+    const [genreInputIsValid, setPublisherInputIsValid] = useState(false);
+    const [publisherInputIsValid, setGenreInputIsValid] = useState(false);
 
-    function authorsInputDidMount() {
-        setIsAuthorsInputInvalid(false);
+    function authorInputDidMount() {
+        setAuthorInputIsValid(true);
     }
 
-    function publishersInputDidMount() {
-        setIsPublishersInputInvalid(false);
+    function publisherInputDidMount() {
+        setPublisherInputIsValid(true);
     }
 
-    function genresInputDidMount() {
-        setIsGenresInputInvalid(false);
+    function genreInputDidMount() {
+        setGenreInputIsValid(true);
     }
 
-    function onSubmit() {
-
-    }
-
-    function onIsbnFetch(bookDetails) {
-        console.log(bookDetails);
-        dispatchBookDetails({type: 'externalFetch', payload: bookDetails})
-    }
+    useEffect(() => {
+        let newStatus = 'loading'
+        if (authorInputIsValid) {
+            if (genreInputIsValid) {
+                if (publisherInputIsValid) {
+                    newStatus = 'success';
+                }
+            }
+        }
+        if (formStatus !== 'error') {
+            setFormStatus(newStatus);
+        }
+    }, [authorInputIsValid, genreInputIsValid, publisherInputIsValid, formStatus])
 
     function onAutocompleteInputError(error) {
         setFormStatus('error');
@@ -56,12 +62,14 @@ export default function BookForm(props) {
         window.location = '/';
     }
 
-    useEffect(() => {
-        setFormStatus(isAuthorsInputInvalid ? 'loading'
-            : isGenresInputInvalid ? 'loading'
-                : isPublishersInputInvalid ? 'loading'
-                    : 'success');
-    }, [isAuthorsInputInvalid, isGenresInputInvalid, isPublishersInputInvalid, formStatus])
+    function onSubmit() {
+
+    }
+
+    function onIsbnFetch(bookDetails) {
+        console.log(bookDetails);
+        dispatchBookDetails({type: 'externalFetch', payload: bookDetails})
+    }
 
     const statusToContent = {
         error: (
@@ -98,14 +106,14 @@ export default function BookForm(props) {
                                     resource="authors"
                                     onMatch={(author) => dispatchBookDetails({type: 'author', payload: author})}
                                     onError={onAutocompleteInputError}
-                                    onMount={authorsInputDidMount}/>
+                                    onMount={authorInputDidMount}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
                                     resource="genres"
                                     onMatch={(genre) => dispatchBookDetails({type: 'genre', payload: genre})}
                                     onError={onAutocompleteInputError}
-                                    onMount={genresInputDidMount}/>
+                                    onMount={genreInputDidMount}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
@@ -115,7 +123,7 @@ export default function BookForm(props) {
                                         payload: publisher
                                     })}
                                     onError={onAutocompleteInputError}
-                                    onMount={publishersInputDidMount}/>
+                                    onMount={publisherInputDidMount}/>
                             </Row>
                             <Row>
                                 <CollectionsInput
