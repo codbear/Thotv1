@@ -1,22 +1,21 @@
 <?php
 
 
-namespace App\ViewModel;
+namespace App\DTO;
 
 
-use App\Entity\Genre;
+use App\Entity\Publisher;
 
-class GenreDTO
+class PublisherDTO
 {
-
     private $id;
     private $name;
 
-    public function __construct(Genre $genre = null)
+    public function __construct(Publisher $publisher = null)
     {
-        if ($genre) {
-            $this->setId($genre->getId());
-            $this->setName($genre->getName());
+        if ($publisher) {
+            $this->setId($publisher->getId());
+            $this->setName($publisher->getName());
         }
     }
 
@@ -30,7 +29,7 @@ class GenreDTO
 
     /**
      * @param mixed $id
-     * @return GenreDTO
+     * @return PublisherDTO
      */
     public function setId($id)
     {
@@ -48,12 +47,11 @@ class GenreDTO
 
     /**
      * @param mixed $name
-     * @return GenreDTO
+     * @return PublisherDTO
      */
     public function setName($name)
     {
         $this->name = $name;
         return $this;
     }
-
 }

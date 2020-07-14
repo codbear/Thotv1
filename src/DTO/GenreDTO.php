@@ -1,22 +1,22 @@
 <?php
 
 
-namespace App\ViewModel;
+namespace App\DTO;
 
 
-use App\Entity\Format;
+use App\Entity\Genre;
 
-class FormatDTO
+class GenreDTO
 {
 
     private $id;
     private $name;
 
-    public function __construct(Format $format = null)
+    public function __construct(Genre $genre = null)
     {
-        if ($format) {
-            $this->setId($format->getId());
-            $this->setName($format->getName());
+        if ($genre) {
+            $this->setId($genre->getId());
+            $this->setName($genre->getName());
         }
     }
 
@@ -30,7 +30,7 @@ class FormatDTO
 
     /**
      * @param mixed $id
-     * @return FormatDTO
+     * @return GenreDTO
      */
     public function setId($id)
     {
@@ -48,7 +48,7 @@ class FormatDTO
 
     /**
      * @param mixed $name
-     * @return FormatDTO
+     * @return GenreDTO
      */
     public function setName($name)
     {

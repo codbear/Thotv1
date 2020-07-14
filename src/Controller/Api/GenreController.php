@@ -3,9 +3,9 @@
 
 namespace App\Controller\Api;
 
+use App\DTO\GenreDTO;
 use App\Entity\Genre;
 use App\Repository\GenreRepository;
-use App\ViewModel\GenreDTO;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

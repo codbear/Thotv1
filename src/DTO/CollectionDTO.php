@@ -1,6 +1,6 @@
 <?php
 
-namespace App\ViewModel;
+namespace App\DTO;
 
 use App\Entity\Collection;
 

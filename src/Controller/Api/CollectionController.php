@@ -3,10 +3,10 @@
 
 namespace App\Controller\Api;
 
+use App\DTO\CollectionDTO;
 use App\Entity\Collection;
 use App\Repository\CollectionRepository;
 use App\Repository\PublisherRepository;
-use App\ViewModel\CollectionDTO;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\View\View;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;

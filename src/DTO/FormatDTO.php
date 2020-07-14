@@ -1,21 +1,22 @@
 <?php
 
 
-namespace App\ViewModel;
+namespace App\DTO;
 
 
-use App\Entity\Publisher;
+use App\Entity\Format;
 
-class PublisherDTO
+class FormatDTO
 {
+
     private $id;
     private $name;
 
-    public function __construct(Publisher $publisher = null)
+    public function __construct(Format $format = null)
     {
-        if ($publisher) {
-            $this->setId($publisher->getId());
-            $this->setName($publisher->getName());
+        if ($format) {
+            $this->setId($format->getId());
+            $this->setName($format->getName());
         }
     }
 
@@ -29,7 +30,7 @@ class PublisherDTO
 
     /**
      * @param mixed $id
-     * @return PublisherDTO
+     * @return FormatDTO
      */
     public function setId($id)
     {
@@ -47,11 +48,12 @@ class PublisherDTO
 
     /**
      * @param mixed $name
-     * @return PublisherDTO
+     * @return FormatDTO
      */
     public function setName($name)
     {
         $this->name = $name;
         return $this;
     }
+
 }

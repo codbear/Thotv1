@@ -4,18 +4,18 @@
 namespace App\Services;
 
 
+use App\DTO\BookDTO;
 use App\Interfaces\BookDetailsFetcherInterface;
-use App\ViewModel\BookViewModel;
 
 class FetchBookDetailsFromGoogle implements BookDetailsFetcherInterface
 {
 
-    public function request(int $isbn): BookViewModel
+    public function request(int $isbn): BookDTO
     {
         $request = 'https://www.googleapis.com/books/v1/volumes?q=isbn:' . $isbn . '&key:' . $_ENV['GOOGLE_API_KEY'];
         $response = file_get_contents($request);
         $results = json_decode($response);
-        $book = new BookViewModel();
+        $book = new BookDTO();
 
         if ($results->totalItems > 0) {
             $bookDetails = $results->items[0];

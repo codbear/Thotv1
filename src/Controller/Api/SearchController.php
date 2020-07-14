@@ -2,9 +2,9 @@
 
 namespace App\Controller\Api;
 
+use App\DTO\BookDTO;
 use App\Services\FetchBookDetailsFromBookfinder;
 use App\Services\FetchBookDetailsFromGoogle;
-use App\ViewModel\BookViewModel;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use JMS\Serializer\SerializerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -21,7 +21,7 @@ class SearchController extends AbstractController
      * @param SerializerInterface $serializer
      * @param FetchBookDetailsFromGoogle $googleFetcher
      * @param FetchBookDetailsFromBookfinder $bookfinderFetcher
-     * @return BookViewModel|void
+     * @return BookDTO|void
      */
     public function external($isbn,
                              SerializerInterface $serializer,
@@ -33,7 +33,7 @@ class SearchController extends AbstractController
             //todo: send response with error "wrong isbn"
         }
 
-        $book = new BookViewModel();
+        $book = new BookDTO();
         $fromGoogle = $googleFetcher->request($isbn);
         $fromBookfinder = $bookfinderFetcher->request($isbn);
         $book->setTitle($fromGoogle->getTitle() ?? $fromBookfinder->getTitle());

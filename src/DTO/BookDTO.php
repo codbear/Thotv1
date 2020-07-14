@@ -1,12 +1,12 @@
 <?php
 
 
-namespace App\ViewModel;
+namespace App\DTO;
 
 
 use App\Entity\Book;
 
-class BookViewModel
+class BookDTO
 {
     private $id;
     private $isbn;
@@ -55,7 +55,7 @@ class BookViewModel
 
     /**
      * @param mixed $author
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setAuthor($author)
     {
@@ -73,7 +73,7 @@ class BookViewModel
 
     /**
      * @param mixed $collection
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setCollection($collection)
     {
@@ -91,7 +91,7 @@ class BookViewModel
 
     /**
      * @param mixed $createdAt
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setCreatedAt($createdAt)
     {
@@ -109,7 +109,7 @@ class BookViewModel
 
     /**
      * @param mixed $description
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setDescription($description)
     {
@@ -127,7 +127,7 @@ class BookViewModel
 
     /**
      * @param mixed $format
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setFormat($format)
     {
@@ -145,7 +145,7 @@ class BookViewModel
 
     /**
      * @param mixed $genre
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setGenre($genre)
     {
@@ -163,7 +163,7 @@ class BookViewModel
 
     /**
      * @param mixed $hasBeenRead
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setHasBeenRead($hasBeenRead)
     {
@@ -181,7 +181,7 @@ class BookViewModel
 
     /**
      * @param mixed $id
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setId($id)
     {
@@ -199,7 +199,7 @@ class BookViewModel
 
     /**
      * @param mixed $isbn
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setIsbn($isbn)
     {
@@ -217,7 +217,7 @@ class BookViewModel
 
     /**
      * @param mixed $isEbook
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setIsEbook($isEbook)
     {
@@ -235,7 +235,7 @@ class BookViewModel
 
     /**
      * @param mixed $observations
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setObservations($observations)
     {
@@ -253,7 +253,7 @@ class BookViewModel
 
     /**
      * @param mixed $publicationYear
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setPublicationYear($publicationYear)
     {
@@ -271,7 +271,7 @@ class BookViewModel
 
     /**
      * @param mixed $publisher
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setPublisher($publisher)
     {
@@ -289,7 +289,7 @@ class BookViewModel
 
     /**
      * @param mixed $title
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setTitle($title)
     {
@@ -307,7 +307,7 @@ class BookViewModel
 
     /**
      * @param mixed $volume
-     * @return BookViewModel
+     * @return BookDTO
      */
     public function setVolume($volume)
     {
