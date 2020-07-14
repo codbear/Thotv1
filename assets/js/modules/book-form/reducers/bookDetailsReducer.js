@@ -1,34 +1,34 @@
 export default function bookDetailsReducer(state, action) {
     switch (action.type) {
-        case 'id':
+        case 'setId':
             return {...state, id: action.payload}
-        case 'isbn':
+        case 'setIsbn':
             return {...state, isbn: action.payload}
-        case 'title':
+        case 'setTitle':
             return {...state, title: action.payload}
-        case 'volume':
+        case 'setVolume':
             return {...state, volume: action.payload}
-        case 'author':
+        case 'setAuthor':
             return {...state, author: action.payload}
-        case 'publisher':
+        case 'setPublisher':
             return {...state, publisher: action.payload}
-        case 'publicationYear':
+        case 'setPublicationYear':
             return {...state, publicationYear: action.payload}
-        case 'collection':
+        case 'setCollection':
             return {...state, collection: action.payload}
-        case 'genre':
+        case 'setGenre':
             return {...state, genre: action.payload}
-        case 'description':
+        case 'setDescription':
             return {...state, description: action.payload}
-        case 'format':
+        case 'setFormat':
             return {...state, format: action.payload}
-        case 'isEbook':
+        case 'setIsEbook':
             return {...state, isEbook: action.payload}
-        case 'hasBeenRead':
+        case 'setHasBeenRead':
             return {...state, hasBeenRead: action.payload}
-        case 'observations':
+        case 'setObservations':
             return {...state, observations: action.payload}
-        case 'externalFetch':
+        case 'setBookDetails':
             return action.payload
         default:
             return state;

@@ -67,8 +67,7 @@ export default function BookForm(props) {
     }
 
     function onIsbnFetch(bookDetails) {
-        console.log(bookDetails);
-        dispatchBookDetails({type: 'externalFetch', payload: bookDetails})
+        dispatchBookDetails({type: 'setBookDetails', payload: bookDetails})
     }
 
     const statusToContent = {
@@ -104,14 +103,14 @@ export default function BookForm(props) {
                             <Row>
                                 <AutocompleteInput
                                     resource="authors"
-                                    onMatch={(author) => dispatchBookDetails({type: 'author', payload: author})}
+                                    onMatch={(author) => dispatchBookDetails({type: 'setAuthor', payload: author})}
                                     onError={onAutocompleteInputError}
                                     onMount={authorInputDidMount}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
                                     resource="genres"
-                                    onMatch={(genre) => dispatchBookDetails({type: 'genre', payload: genre})}
+                                    onMatch={(genre) => dispatchBookDetails({type: 'setGenre', payload: genre})}
                                     onError={onAutocompleteInputError}
                                     onMount={genreInputDidMount}/>
                             </Row>
@@ -119,7 +118,7 @@ export default function BookForm(props) {
                                 <AutocompleteInput
                                     resource="publishers"
                                     onMatch={(publisher) => dispatchBookDetails({
-                                        type: 'publisher',
+                                        type: 'setPublisher',
                                         payload: publisher
                                     })}
                                     onError={onAutocompleteInputError}
@@ -128,7 +127,7 @@ export default function BookForm(props) {
                             <Row>
                                 <CollectionsInput
                                     onMatch={(collection) => dispatchBookDetails({
-                                        type: 'collection',
+                                        type: 'setCollection',
                                         payload: collection
                                     })}
                                     publisher={bookDetails.publisher}
