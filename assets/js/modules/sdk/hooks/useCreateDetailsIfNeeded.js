@@ -22,7 +22,6 @@ export default function useCreateDetailsIfNeeded(authors, genres, publishers) {
             if (detailValue === null) {
                 return;
             }
-            console.log(detail, JSON.stringify(hld));
             const [perfectlyMatchingOptions] = filterMatchingOptions(detailValue, hld[detail]);
 
             if (perfectlyMatchingOptions.length === 0) {
