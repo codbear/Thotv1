@@ -1,5 +1,9 @@
-import React, {useEffect, useReducer, useState} from 'react';
+import React, {useReducer, useState} from 'react';
+import {useQuery} from 'react-query';
 import {Col, Form, Row} from 'react-bootstrap';
+
+import {Loader} from '../../../loader';
+import {ErrorBox} from '../../../error-box';
 
 import FormGroup from '../form-group/FormGroup';
 import AutocompleteInput from '../autocomplete-input/AutocompleteInput';
@@ -7,10 +11,10 @@ import CollectionsInput from '../collections-input/CollectionsInput';
 import SubmitButton from '../buttons/SubmitButton';
 import IsbnFetcherInput from '../isbn-fetcher-input/IsbnFetcherInput';
 
-import {Loader} from '../../../loader';
-import {ErrorBox} from '../../../error-box';
+import externalFetcher from '../../services/externalFetcher';
+import apiFetcher from '../../../../services/apiFetcher';
 
-import externalFetcher from "../../services/externalFetcher";
+import useCreateDetailsIfNeeded from "../../../sdk/hooks/useCreateDetailsIfNeeded";
 
 import bookDetailsReducer from "../../reducers/bookDetailsReducer";
 
@@ -23,40 +27,28 @@ export default function BookForm(props) {
     const [isbnToFetch, setIsbnToFetch] = useState(undefined);
     const [errorMessage, setErrorMessage] = useState(undefined)
     const [warningMessage, setWarningMessage] = useState(undefined)
-    const [authorInputIsValid, setAuthorInputIsValid] = useState(false);
-    const [genreInputIsValid, setPublisherInputIsValid] = useState(false);
-    const [publisherInputIsValid, setGenreInputIsValid] = useState(false);
 
-    function authorInputDidMount() {
-        setAuthorInputIsValid(true);
-    }
 
-    function publisherInputDidMount() {
-        setPublisherInputIsValid(true);
-    }
-
-    function genreInputDidMount() {
-        setGenreInputIsValid(true);
-    }
-
-    useEffect(() => {
-        let newStatus = 'loading'
-        if (authorInputIsValid) {
-            if (genreInputIsValid) {
-                if (publisherInputIsValid) {
-                    newStatus = 'success';
-                }
+    const highLevelDetailsQuery = useQuery('highLevelDetails', () =>
+            Promise.all([
+                apiFetcher('/api/authors'),
+                apiFetcher('/api/genres'),
+                apiFetcher('/api/publishers'),
+            ]), {
+            onSuccess: () => {
+                setFormStatus('success')
+            },
+            onError: (error) => {
+                setFormStatus('error');
+                setErrorMessage(error.message);
             }
         }
-        if (formStatus !== 'error' && formStatus !== 'fetching' && formStatus !== 'warning') {
-            setFormStatus(newStatus);
-        }
-    }, [authorInputIsValid, genreInputIsValid, publisherInputIsValid, formStatus])
+    );
 
-    function onAutocompleteInputError(error) {
-        setFormStatus('error');
-        setErrorMessage(error.message);
-    }
+    const [authorsIndex = [], genresIndex = [], publishersIndex = []] = highLevelDetailsQuery.data || [];
+
+
+    const createDetails = useCreateDetailsIfNeeded(authorsIndex, genresIndex, publishersIndex);
 
     function reloadForm() {
         setFormStatus('loading');
@@ -79,6 +71,10 @@ export default function BookForm(props) {
             if (bookDetails.title === null) {
                 throw new Error('Aucun résultat disponible pour le numéro ISBN fourni.');
             }
+
+            const {author, publisher, genre} = bookDetails;
+
+            createDetails({author, publisher, genre});
 
             dispatchBookDetails({type: 'setBookDetails', payload: bookDetails});
             return setFormStatus('success');
@@ -116,7 +112,7 @@ export default function BookForm(props) {
                             </Row>
                             <Row>
                                 <IsbnFetcherInput
-                                    value={bookDetails.isbn}
+                                    value={'9781451648546' || bookDetails.isbn}
                                     onFetch={onIsbnFetch}/>
                             </Row>
                         </Col>
@@ -130,36 +126,36 @@ export default function BookForm(props) {
                             </Row>
                             <Row>
                                 <AutocompleteInput
-                                    resource="authors"
-                                    onMatch={(author) => dispatchBookDetails({type: 'setAuthor', payload: author})}
-                                    onError={onAutocompleteInputError}
-                                    onMount={authorInputDidMount}/>
+                                    detailName="authors"
+                                    options={authorsIndex}
+                                    value={bookDetails.author}
+                                    onMatch={(author) => dispatchBookDetails({type: 'setAuthor', payload: author})}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
-                                    resource="genres"
-                                    onMatch={(genre) => dispatchBookDetails({type: 'setGenre', payload: genre})}
-                                    onError={onAutocompleteInputError}
-                                    onMount={genreInputDidMount}/>
+                                    detailName="genres"
+                                    options={genresIndex}
+                                    value={bookDetails.genre}
+                                    onMatch={(genre) => dispatchBookDetails({type: 'setGenre', payload: genre})}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
-                                    resource="publishers"
+                                    detailName="publishers"
+                                    options={publishersIndex}
+                                    value={bookDetails.publisher}
                                     onMatch={(publisher) => dispatchBookDetails({
                                         type: 'setPublisher',
                                         payload: publisher
-                                    })}
-                                    onError={onAutocompleteInputError}
-                                    onMount={publisherInputDidMount}/>
+                                    })}/>
                             </Row>
                             <Row>
                                 <CollectionsInput
+                                    value={bookDetails.collection}
                                     onMatch={(collection) => dispatchBookDetails({
                                         type: 'setCollection',
                                         payload: collection
                                     })}
-                                    publisher={bookDetails.publisher}
-                                    onError={onAutocompleteInputError}/>
+                                    publisher={bookDetails.publisher}/>
                             </Row>
                             <Row>
                                 <FormGroup
