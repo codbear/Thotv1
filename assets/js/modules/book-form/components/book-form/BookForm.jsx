@@ -173,6 +173,13 @@ export default function BookForm({book}) {
                                     type="number"
                                     value={bookDetails.publicationYear}/>
                             </Row>
+                            <Row>
+                                <AutocompleteInput
+                                    detailName="formats"
+                                    options={formatsIndex}
+                                    value={bookDetails.format}
+                                    onMatch={(format) => dispatchBookDetails({type: 'setFormat', payload: format})}/>
+                            </Row>
                         </Col>
                     </Row>
                     <Row>
