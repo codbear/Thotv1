@@ -11,7 +11,7 @@ import CollectionsInput from '../collections-input/CollectionsInput';
 import SubmitButton from '../buttons/SubmitButton';
 import IsbnFetcherInput from '../isbn-fetcher-input/IsbnFetcherInput';
 
-import externalFetcher from '../../services/externalFetcher';
+import isbnFetcher from '../../services/isbnFetcher';
 import apiFetcher from '../../../../services/apiFetcher';
 
 import useCreateDetailsIfNeeded from "../../../sdk/hooks/useCreateDetailsIfNeeded";
@@ -20,33 +20,35 @@ import bookDetailsReducer from "../../reducers/bookDetailsReducer";
 
 import './styles/bookForm.scss'
 
-export default function BookForm(props) {
-    const {book} = props;
+export default function BookForm({book}) {
     const [bookDetails, dispatchBookDetails] = useReducer(bookDetailsReducer, book);
     const [formStatus, setFormStatus] = useState('loading');
     const [isbnToFetch, setIsbnToFetch] = useState(undefined);
-    const [errorMessage, setErrorMessage] = useState(undefined)
-    const [warningMessage, setWarningMessage] = useState(undefined)
-
+    const [message, setMessage] = useState(undefined);
 
     const highLevelDetailsQuery = useQuery('highLevelDetails', () =>
             Promise.all([
                 apiFetcher('/api/authors'),
                 apiFetcher('/api/genres'),
                 apiFetcher('/api/publishers'),
+                apiFetcher('/api/formats'),
             ]), {
             onSuccess: () => {
                 setFormStatus('success')
             },
             onError: (error) => {
                 setFormStatus('error');
-                setErrorMessage(error.message);
+                setMessage(error.message);
             }
         }
     );
 
-    const [authorsIndex = [], genresIndex = [], publishersIndex = []] = highLevelDetailsQuery.data || [];
-
+    const [
+        authorsIndex = [],
+        genresIndex = [],
+        publishersIndex = [],
+        formatsIndex = []
+    ] = highLevelDetailsQuery.data || [];
 
     const createDetails = useCreateDetailsIfNeeded(authorsIndex, genresIndex, publishersIndex);
 
@@ -63,10 +65,10 @@ export default function BookForm(props) {
     }
 
     async function onIsbnFetch(isbn) {
-        setFormStatus('fetching');
+        setFormStatus('loading');
         setIsbnToFetch(isbn);
         try {
-            const bookDetails = await externalFetcher(isbn);
+            const bookDetails = await isbnFetcher(isbn);
 
             if (bookDetails.title === null) {
                 throw new Error('Aucun résultat disponible pour le numéro ISBN fourni.');
@@ -79,8 +81,8 @@ export default function BookForm(props) {
             dispatchBookDetails({type: 'setBookDetails', payload: bookDetails});
             return setFormStatus('success');
         } catch (e) {
-            setWarningMessage(e.message);
-            setFormStatus('warning');
+            setMessage(e.message);
+            setFormStatus('isbnError');
         }
     }
 
@@ -89,22 +91,24 @@ export default function BookForm(props) {
     }
 
     const statusToContent = {
-        warning: (
+        isbnError: (
             <ErrorBox
-                message={warningMessage}
+                message={message}
                 onRetry={fetchIsbnAgain}
                 onClose={reloadForm}/>
         ),
         error: (
             <ErrorBox
-                message={errorMessage}
+                message={message}
                 onRetry={reloadForm}
                 onClose={goBackHome}/>
         ),
-        default: (
+        loading: (
+            <Loader visible light/>
+        ),
+        success: (
             <React.Fragment>
-                <Loader visible={formStatus !== 'success'} light/>
-                <Form className={formStatus !== 'success' ? 'hidden' : ''}>
+                <Form>
                     <Row>
                         <Col>
                             <Row>
@@ -195,7 +199,7 @@ export default function BookForm(props) {
 
     return (
         <React.Fragment>
-            {statusToContent[formStatus] || statusToContent.default}
+            {statusToContent[formStatus] || statusToContent.loading}
         </React.Fragment>
     )
 }
