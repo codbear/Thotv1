@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 
 import filterMatchingOptions from "../services/filterMatchingOptions";
@@ -8,22 +8,29 @@ import {AutocompleteDropdown} from "../modules/autocomplete-dropdown";
 import '../styles/autocomplete.scss';
 
 export default function Autocomplete(props) {
-    const {options, label, name, placeholder, required, disabled, onMatch, onCreateNew, isInvalid} = props
+    const {options, label, name, value, placeholder, required, disabled, onMatch, onChange, onCreateNew, isInvalid} = props
     const [suggestions, setSuggestions] = useState({all: [], matching: null});
-    const [inputValue, setInputValue] = useState('');
+    const [inputValue, setInputValue] = useState(value || '');
     const [focusIndex, setFocusIndex] = useState(-1);
+    const [dropdownStatus, setDropdownStatus] = useState('hidden');
 
     const handleChange = (event) => {
         const [matchingOptions, perfectlyMatchingOptions] = filterMatchingOptions(event.target.value, options);
         setSuggestions({all: matchingOptions, matching: perfectlyMatchingOptions[0]});
         setInputValue(event.target.value);
-        if (perfectlyMatchingOptions[0]) onMatch(perfectlyMatchingOptions[0]);
+        setDropdownStatus('visible');
+        onChange(event.target.value);
+        if (perfectlyMatchingOptions[0]) {
+            setDropdownStatus('hidden');
+            onMatch(perfectlyMatchingOptions[0]);
+        }
     }
 
     const setInputValueWithChosenOption = (optionValue) => {
         const [matchingOptions, perfectlyMatchingOptions] = filterMatchingOptions(optionValue, options);
         setSuggestions({all: matchingOptions, matching: perfectlyMatchingOptions[0]});
         setInputValue(optionValue);
+        setDropdownStatus('hidden');
         onMatch(perfectlyMatchingOptions[0]);
     }
 
@@ -60,6 +67,12 @@ export default function Autocomplete(props) {
     let className = 'form-control';
     if (isInvalid) className += ' is-invalid';
 
+    useEffect(() => {
+        if (inputValue !== '' && !suggestions.matching && !value) {
+            setDropdownStatus('visible');
+        }
+    }, [inputValue, suggestions.matching, dropdownStatus]);
+
     return (
         <div className="autocomplete">
             {(label) && (<label htmlFor={name}>{label}</label>)}
@@ -73,7 +86,7 @@ export default function Autocomplete(props) {
                 disabled={disabled}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}/>
-            {(inputValue !== '' && !suggestions.matching) && (
+            {(dropdownStatus === 'visible') && (
                 <AutocompleteDropdown
                     suggestedOptions={suggestions.all}
                     inputValue={inputValue}
@@ -86,16 +99,18 @@ export default function Autocomplete(props) {
 }
 
 Autocomplete.defaultProps = {
-    options: [],
     placeholder: '',
     name: '',
+    value: undefined,
     required: false,
-    disabled: false
+    disabled: false,
+    onChange: () => {
+    },
 }
 
 Autocomplete.propTypes = {
-    options: PropTypes.array,
-    label: PropTypes.string,
+    options: PropTypes.array.isRequired,
+    label: PropTypes.string.isRequired,
     name: PropTypes.string,
     placeholder: PropTypes.string,
     required: PropTypes.bool,

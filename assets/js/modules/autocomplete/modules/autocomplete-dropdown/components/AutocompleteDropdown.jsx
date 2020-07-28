@@ -13,11 +13,13 @@ export default function AutocompleteDropdown({suggestedOptions, inputValue, onCl
                     isFocused={suggestedOptions[focusIndex] === option}/>
             ))
             }
-            <li
-                className="autocomplete-option autocomplete-add text-dark"
-                onClick={() => onCreateNew(inputValue)}>
-                Ajouter "{inputValue}"
-            </li>
+            {(onCreateNew) && (
+                <li
+                    className="autocomplete-option autocomplete-add text-dark"
+                    onClick={() => onCreateNew(inputValue)}>
+                    Ajouter "{inputValue}"
+                </li>
+            )}
         </ul>
     )
 }

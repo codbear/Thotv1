@@ -19,12 +19,15 @@ import useCreateDetailsIfNeeded from "../../../sdk/hooks/useCreateDetailsIfNeede
 import bookDetailsReducer from "../../reducers/bookDetailsReducer";
 
 import './styles/bookForm.scss'
+import CreateDetailPopIn from "../create-detail-pop-in/CreateDetailPopIn";
+import isMatching from "../../services/isMatching";
 
 export default function BookForm({book}) {
     const [bookDetails, dispatchBookDetails] = useReducer(bookDetailsReducer, book);
     const [formStatus, setFormStatus] = useState('loading');
     const [isbnToFetch, setIsbnToFetch] = useState(undefined);
     const [message, setMessage] = useState(undefined);
+    const [hldToCreate, setHldToCreate] = useState({author: undefined, genre: undefined, publisher: undefined});
 
     const highLevelDetailsQuery = useQuery('highLevelDetails', () =>
             Promise.all([
@@ -39,7 +42,8 @@ export default function BookForm({book}) {
             onError: (error) => {
                 setFormStatus('error');
                 setMessage(error.message);
-            }
+            },
+            refetchOnWindowFocus: false,
         }
     );
 
@@ -68,7 +72,7 @@ export default function BookForm({book}) {
         setFormStatus('loading');
         setIsbnToFetch(isbn);
         try {
-            const bookDetails = await isbnFetcher(isbn);
+            let bookDetails = await isbnFetcher(isbn);
 
             if (bookDetails.title === null) {
                 throw new Error('Aucun résultat disponible pour le numéro ISBN fourni.');
@@ -76,10 +80,29 @@ export default function BookForm({book}) {
 
             const {author, publisher, genre} = bookDetails;
 
-            createDetails({author, publisher, genre});
+            bookDetails.author = author.name
+                ? authorsIndex.find(isMatching(author))
+                : author;
+            bookDetails.publisher = publisher.name
+                ? publishersIndex.find(isMatching(publisher))
+                : publisher;
+            bookDetails.genre = genre.name
+                ? genresIndex.find(isMatching(genre))
+                : genre;
+
+            const shouldReviewAuthor = bookDetails.author.name !== null && bookDetails.author.id === null;
+            const shouldReviewPublisher = bookDetails.publisher.name !== null && bookDetails.publisher.id === null;
+            const shouldReviewGenre = bookDetails.genre.name !== null && bookDetails.genre.id === null;
+            const shouldReviewDetails = shouldReviewAuthor || shouldReviewPublisher || shouldReviewGenre;
+
+            if (shouldReviewDetails) {
+                setHldToCreate({author, publisher, genre});
+                return setFormStatus('hldCreation');
+            }
 
             dispatchBookDetails({type: 'setBookDetails', payload: bookDetails});
             return setFormStatus('success');
+
         } catch (e) {
             setMessage(e.message);
             setFormStatus('isbnError');
@@ -95,6 +118,16 @@ export default function BookForm({book}) {
             <ErrorBox
                 message={message}
                 onRetry={fetchIsbnAgain}
+                onClose={reloadForm}/>
+        ),
+        hldCreation: (
+            <CreateDetailPopIn
+                authorsIndex={authorsIndex}
+                genresIndex={genresIndex}
+                publishersIndex={publishersIndex}
+                fetchedDetails={hldToCreate}
+                onCreate={() => {
+                }}
                 onClose={reloadForm}/>
         ),
         error: (
