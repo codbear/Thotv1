@@ -80,15 +80,19 @@ export default function BookForm({book}) {
 
             const {author, publisher, genre} = bookDetails;
 
-            bookDetails.author = author.name
+            const authorInDb = author.name
                 ? authorsIndex.find(isMatching(author))
-                : author;
-            bookDetails.publisher = publisher.name
+                : undefined;
+            const publisherInDb = publisher.name
                 ? publishersIndex.find(isMatching(publisher))
-                : publisher;
-            bookDetails.genre = genre.name
+                : undefined;
+            const genreInDb = genre.name
                 ? genresIndex.find(isMatching(genre))
-                : genre;
+                : undefined;
+
+            bookDetails.author = authorInDb ?? author;
+            bookDetails.publisher = publisherInDb ?? publisher;
+            bookDetails.genre = genreInDb ?? genre;
 
             const shouldReviewAuthor = bookDetails.author.name !== null && bookDetails.author.id === null;
             const shouldReviewPublisher = bookDetails.publisher.name !== null && bookDetails.publisher.id === null;
