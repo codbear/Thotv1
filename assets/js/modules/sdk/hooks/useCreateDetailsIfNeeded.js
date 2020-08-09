@@ -1,11 +1,18 @@
-import filterMatchingOptions from "../../autocomplete/services/filterMatchingOptions";
 import useCreateDetailByType from "./useCreateDetailByType";
+import isMatching from "../../book-form/components/book-form/services/isMatching";
+import {useReducer} from "react";
+import highLevelDetailsReducer from "../../book-form/reducers/highLevelDetailsReducer";
 
 const detailsToCheck = ['authors', 'genres', 'publishers'];
+const detailDispatcherActionTypeMapper = {
+    authors: 'setAuthor',
+    genres: 'setGenres',
+    publishers: 'setPublisher',
+}
 const HLDMapper = {
-    authors: (bookDetails) => bookDetails.author.name,
-    genres: (bookDetails) => bookDetails.genre.name,
-    publishers: (bookDetails) => bookDetails.publisher.name,
+    authors: (bookDetails) => bookDetails.author ?? null,
+    genres: (bookDetails) => bookDetails.genre ?? null,
+    publishers: (bookDetails) => bookDetails.publisher ?? null,
 }
 
 export default function useCreateDetailsIfNeeded(authors, genres, publishers) {
@@ -16,17 +23,30 @@ export default function useCreateDetailsIfNeeded(authors, genres, publishers) {
         return acc;
     }, {});
 
-    return (bookDetails) => {
-        detailsToCheck.forEach((detail) => {
-            const detailValue = HLDMapper[detail](bookDetails);
-            if (detailValue === null) {
+    const [createdDetails, dispatchCreatedDetail] = useReducer(highLevelDetailsReducer, {
+        author: null,
+        genre: null,
+        publisher: null
+    });
+
+    function getDetailDispatcherFromDetail(detail) {
+        let actionType = detailDispatcherActionTypeMapper[detail];
+        return (actionPayload) => dispatchCreatedDetail({type: actionType, payload: actionPayload});
+    }
+
+    return [createdDetails, (bookDetails) => {
+        detailsToCheck.forEach(async (detail) => {
+            const detailToCreate = HLDMapper[detail](bookDetails)
+
+            if (detailToCreate === null) {
                 return;
             }
-            const [perfectlyMatchingOptions] = filterMatchingOptions(detailValue, hld[detail]);
 
-            if (perfectlyMatchingOptions.length === 0) {
-                config[detail].create(detailValue);
+            if (hld[detail].find(isMatching(detailToCreate))) {
+                return
             }
+
+            getDetailDispatcherFromDetail(detail)(await config[detail].create(detailToCreate.name));
         })
-    };
+    }];
 }

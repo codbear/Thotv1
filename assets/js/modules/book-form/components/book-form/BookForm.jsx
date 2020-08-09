@@ -1,33 +1,43 @@
+/* Dependencies */
 import React, {useReducer, useState} from 'react';
 import {useQuery} from 'react-query';
 import {Col, Form, Row} from 'react-bootstrap';
 
+/* Modules */
 import {Loader} from '../../../loader';
 import {ErrorBox} from '../../../error-box';
-
 import FormGroup from '../form-group/FormGroup';
 import AutocompleteInput from '../autocomplete-input/AutocompleteInput';
 import CollectionsInput from '../collections-input/CollectionsInput';
 import SubmitButton from '../buttons/SubmitButton';
 import IsbnFetcherInput from '../isbn-fetcher-input/IsbnFetcherInput';
-
-import isbnFetcher from '../../services/isbnFetcher';
-import apiFetcher from '../../../../services/apiFetcher';
-
-import useCreateDetailsIfNeeded from "../../../sdk/hooks/useCreateDetailsIfNeeded";
-
-import bookDetailsReducer from "../../reducers/bookDetailsReducer";
-
-import './styles/bookForm.scss'
 import CreateDetailPopIn from "../create-detail-pop-in/CreateDetailPopIn";
-import isMatching from "../../services/isMatching";
+
+/* Hooks & Services */
+import isbnFetcher from './services/isbnFetcher';
+import apiFetcher from '../../../../services/apiFetcher';
+import isMatching from "./services/isMatching";
+
+/* Reducers */
+import bookDetailsReducer from "./reducers/bookDetailsReducer";
+import highLevelDetailsReducer from "../../reducers/highLevelDetailsReducer";
+
+/* Styles */
+import './styles/bookForm.scss'
+import useCreateBook from "../../../sdk/hooks/useCreateBook";
 
 export default function BookForm({book}) {
     const [bookDetails, dispatchBookDetails] = useReducer(bookDetailsReducer, book);
     const [formStatus, setFormStatus] = useState('loading');
     const [isbnToFetch, setIsbnToFetch] = useState(undefined);
     const [message, setMessage] = useState(undefined);
-    const [hldToCreate, setHldToCreate] = useState({author: undefined, genre: undefined, publisher: undefined});
+    const [hldToCreate, dispatchHldToCreate] = useReducer(highLevelDetailsReducer, {
+        author: undefined,
+        genre: undefined,
+        publisher: undefined
+    });
+
+    const createNewBook = useCreateBook();
 
     const highLevelDetailsQuery = useQuery('highLevelDetails', () =>
             Promise.all([
@@ -44,6 +54,7 @@ export default function BookForm({book}) {
                 setMessage(error.message);
             },
             refetchOnWindowFocus: false,
+            retry: 2,
         }
     );
 
@@ -54,8 +65,6 @@ export default function BookForm({book}) {
         formatsIndex = []
     ] = highLevelDetailsQuery.data || [];
 
-    const createDetails = useCreateDetailsIfNeeded(authorsIndex, genresIndex, publishersIndex);
-
     function reloadForm() {
         setFormStatus('loading');
     }
@@ -65,7 +74,8 @@ export default function BookForm({book}) {
     }
 
     function onSubmit() {
-
+        console.log(bookDetails);
+        createNewBook(bookDetails);
     }
 
     async function onIsbnFetch(isbn) {
@@ -94,19 +104,28 @@ export default function BookForm({book}) {
             bookDetails.publisher = publisherInDb ?? publisher;
             bookDetails.genre = genreInDb ?? genre;
 
+            dispatchBookDetails({type: 'setBookDetails', payload: bookDetails});
+            dispatchBookDetails({type: 'setIsbn', payload: isbn});
+
             const shouldReviewAuthor = bookDetails.author.name !== null && bookDetails.author.id === null;
             const shouldReviewPublisher = bookDetails.publisher.name !== null && bookDetails.publisher.id === null;
             const shouldReviewGenre = bookDetails.genre.name !== null && bookDetails.genre.id === null;
             const shouldReviewDetails = shouldReviewAuthor || shouldReviewPublisher || shouldReviewGenre;
 
             if (shouldReviewDetails) {
-                setHldToCreate({author, publisher, genre});
+                if (shouldReviewAuthor) {
+                    dispatchHldToCreate({type: 'setAuthor', payload: author});
+                }
+                if (shouldReviewPublisher) {
+                    dispatchHldToCreate({type: 'setPublisher', payload: publisher});
+                }
+                if (shouldReviewGenre) {
+                    dispatchHldToCreate({type: 'setGenre', payload: genre});
+                }
                 return setFormStatus('hldCreation');
             }
 
-            dispatchBookDetails({type: 'setBookDetails', payload: bookDetails});
             return setFormStatus('success');
-
         } catch (e) {
             setMessage(e.message);
             setFormStatus('isbnError');
@@ -115,6 +134,20 @@ export default function BookForm({book}) {
 
     function fetchIsbnAgain() {
         onIsbnFetch(isbnToFetch);
+    }
+
+    function onHldCreation(createdDetails) {
+        const {author, publisher, genre} = createdDetails;
+        if (author) {
+            dispatchBookDetails({type: 'setAuthor', payload: author});
+        }
+        if (publisher) {
+            dispatchBookDetails({type: 'setPublisher', payload: publisher});
+        }
+        if (genre) {
+            dispatchBookDetails({type: 'setGenre', payload: genre});
+        }
+        return setFormStatus('success');
     }
 
     const statusToContent = {
@@ -130,9 +163,8 @@ export default function BookForm({book}) {
                 genresIndex={genresIndex}
                 publishersIndex={publishersIndex}
                 fetchedDetails={hldToCreate}
-                onCreate={() => {
-                }}
-                onClose={reloadForm}/>
+                onCreate={onHldCreation}
+                onClose={() => setFormStatus('success')}/>
         ),
         error: (
             <ErrorBox
@@ -153,7 +185,7 @@ export default function BookForm({book}) {
                             </Row>
                             <Row>
                                 <IsbnFetcherInput
-                                    value={'9781451648546' || bookDetails.isbn}
+                                    value={bookDetails.isbn}
                                     onFetch={onIsbnFetch}/>
                             </Row>
                         </Col>

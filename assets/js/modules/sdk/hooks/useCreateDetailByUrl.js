@@ -2,11 +2,11 @@ import {useMutation} from "react-query";
 import apiFetcher from "../../../services/apiFetcher";
 
 export default function useCreateDetailByUrl(resourceUrl) {
-    const [mutate] = useMutation(({value}) => {
+    const [mutate] = useMutation(({value}) =>
         apiFetcher(resourceUrl, 'POST', {name: value})
-    });
+    );
 
     return async function createNewResource(value) {
-        await mutate({value})
+        return await mutate({value});
     };
 }

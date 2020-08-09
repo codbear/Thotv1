@@ -1,25 +1,81 @@
-import React, {useState} from "react";
+/* Dependencies */
+import React, {useEffect, useReducer} from "react";
 import PropTypes from "prop-types";
-
 import {Button, Col, Container, Row} from "react-bootstrap";
+
+/* Modules */
 import {Autocomplete} from "../../../autocomplete";
 
-import './styles/createDetailPopIn.scss';
+/* Hooks & Services */
 import useCreateDetailsIfNeeded from "../../../sdk/hooks/useCreateDetailsIfNeeded";
+
+/* Reducers */
+import highLevelDetailsReducer from "../../reducers/highLevelDetailsReducer";
+
+/* Styles */
+import './styles/createDetailPopIn.scss';
 
 export default function CreateDetailPopIn(props) {
     const {fetchedDetails, authorsIndex, genresIndex, publishersIndex, onCreate, onClose} = props;
-    const [hldToCreate, setHldToCreate] = useState({
+    const [hldToCreate, dispatchHldToCreate] = useReducer(highLevelDetailsReducer, {
         author: fetchedDetails.author,
         publisher: fetchedDetails.publisher,
         genre: fetchedDetails.genre
     });
 
-    const createDetailsIfNeeded = useCreateDetailsIfNeeded(authorsIndex, genresIndex, publishersIndex);
+    const [createdDetails, createDetailsIfNeeded] = useCreateDetailsIfNeeded(authorsIndex, genresIndex, publishersIndex);
+
+    const authorMustBeCreated = Boolean(hldToCreate.author);
+    const genreMustBeCreated = Boolean(hldToCreate.genre);
+    const publisherMustBeCreated = Boolean(hldToCreate.publisher);
+
+    useEffect(() => {
+        const shouldWaitForAuthorToBeCreated = authorMustBeCreated ? createdDetails.author === null : false;
+        const shouldWaitForGenreToBeCreated = genreMustBeCreated ? createdDetails.genre === null : false;
+        const shouldWaitForPublisherToBeCreated = publisherMustBeCreated ? createdDetails.publisher === null : false;
+        const detailsSuccessfullyCreated = shouldWaitForAuthorToBeCreated === false && shouldWaitForGenreToBeCreated === false && shouldWaitForPublisherToBeCreated === false;
+        if (detailsSuccessfullyCreated) {
+            onCreate(createdDetails);
+        }
+    }, [onCreate, createdDetails])
+
+    function getBookDetailsDispatcherByType(actionType) {
+        return (actionPayload) => {
+            if (!actionPayload.name) {
+                actionPayload = {
+                    id: null,
+                    name: actionPayload,
+                }
+            }
+            dispatchHldToCreate({type: actionType, payload: actionPayload});
+        }
+    }
 
     function createDetails() {
         createDetailsIfNeeded(hldToCreate);
-        onCreate();
+    }
+
+    const authorNeedToBeReviewed = Boolean(fetchedDetails.author);
+    const publisherNeedToBeReviewed = Boolean(fetchedDetails.publisher);
+    const genreNeedToBeReviewed = Boolean(fetchedDetails.genre);
+    const onlyAuthorNeedToBeReviewed = authorNeedToBeReviewed && publisherNeedToBeReviewed === false && genreNeedToBeReviewed === false;
+    const onlyPublisherNeedToBeReviewed = authorNeedToBeReviewed === false && publisherNeedToBeReviewed && genreNeedToBeReviewed === false;
+    const onlyGenreNeedToBeReviewed = authorNeedToBeReviewed === false && publisherNeedToBeReviewed === false && genreNeedToBeReviewed;
+
+    let headerMessage = 'Des détails de ce livre n\'existent pas dans votre base de données et doivent d\'abord être créés.'
+    let helperMessage = 'Saisissez du texte dans le champ d\'un détail ci-dessous pour le modifier ou pour rechercher une correspondance dans votre base de données.'
+
+    if (onlyAuthorNeedToBeReviewed) {
+        headerMessage = 'L\'auteur de ce livre n\'existe pas dans votre base de données et doit d\'abord être créé.';
+        helperMessage = 'Vous pouvez modifier l\'auteur dans le champ ci-dessous ou rechercher une correspondance dans votre base de données.';
+    }
+    if (onlyPublisherNeedToBeReviewed) {
+        headerMessage = 'L\'éditeur de ce livre n\'existe pas dans votre base de données et doit d\'abord être créé.';
+        helperMessage = 'Vous pouvez modifier l\'éditeur dans le champ ci-dessous ou rechercher une correspondance dans votre base de données.';
+    }
+    if (onlyGenreNeedToBeReviewed) {
+        headerMessage = 'Le genre de ce livre n\'existe pas dans votre base de données et doit d\'abord être créé.';
+        helperMessage = 'Vous pouvez modifier le genre dans le champ ci-dessous ou rechercher une correspondance dans votre base de données.';
     }
 
     return (
@@ -29,60 +85,41 @@ export default function CreateDetailPopIn(props) {
             aria-labelledby="titleModal">
             <div className="hld-popin-wrapper">
                 <h1 className="hld-popin-header">
-                    Des détails de ce livre n'existent pas dans votre base de données et doivent d'abord être créés.
+                    {headerMessage}
                 </h1>
                 <Container className="hld-popin-content">
                     <Row>
-                        Saisissez du texte dans le champ d'un détail ci-dessous pour le modifier ou pour rechercher une
-                        correspondance dans votre base de données.
+                        {helperMessage}
                     </Row>
                     <Row>
-                        {(fetchedDetails.author.name) && (
+                        {(fetchedDetails.author) && (
                             <Col>
                                 <Autocomplete
                                     label="Auteur"
                                     options={authorsIndex}
                                     value={fetchedDetails.author.name}
-                                    onMatch={(matchingAuthor) => setHldToCreate({
-                                        ...hldToCreate,
-                                        author: matchingAuthor
-                                    })}
-                                    onChange={(inputValue) => setHldToCreate({
-                                        ...hldToCreate,
-                                        author: {id: undefined, name: inputValue}
-                                    })}/>
+                                    onMatch={getBookDetailsDispatcherByType('setAuthor')}
+                                    onChange={getBookDetailsDispatcherByType('setAuthor')}/>
                             </Col>
                         )}
-                        {(fetchedDetails.publisher.name) && (
+                        {(fetchedDetails.publisher) && (
                             <Col>
                                 <Autocomplete
                                     label="Éditeur"
                                     options={publishersIndex}
                                     value={fetchedDetails.publisher.name}
-                                    onMatch={(matchingPublisher) => setHldToCreate({
-                                        ...hldToCreate,
-                                        publisher: matchingPublisher
-                                    })}
-                                    onChange={(inputValue) => setHldToCreate({
-                                        ...hldToCreate,
-                                        publisher: {id: undefined, name: inputValue}
-                                    })}/>
+                                    onMatch={getBookDetailsDispatcherByType('setPublisher')}
+                                    onChange={getBookDetailsDispatcherByType('setPublisher')}/>
                             </Col>
                         )}
-                        {(fetchedDetails.genre.name) && (
+                        {(fetchedDetails.genre) && (
                             <Col>
                                 <Autocomplete
                                     label="Genre"
                                     options={genresIndex}
                                     value={fetchedDetails.genre.name}
-                                    onMatch={(matchingGenre) => setHldToCreate({
-                                        ...hldToCreate,
-                                        genre: matchingGenre
-                                    })}
-                                    onChange={(inputValue) => setHldToCreate({
-                                        ...hldToCreate,
-                                        genre: {id: undefined, name: inputValue}
-                                    })}/>
+                                    onMatch={getBookDetailsDispatcherByType('setGenre')}
+                                    onChange={getBookDetailsDispatcherByType('setGenre')}/>
                             </Col>
                         )}
                     </Row>

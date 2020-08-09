@@ -9,7 +9,7 @@ export default async function apiFetcher(route, method = 'GET', data = {}) {
     }
 
     if (method !== 'GET') options.body = JSON.stringify(data);
-//route+='c';
+
     const response = await fetch(route, options);
 
     if (!response.ok) {

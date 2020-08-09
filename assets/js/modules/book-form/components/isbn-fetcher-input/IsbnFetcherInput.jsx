@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {Button, Col, Form, InputGroup} from "react-bootstrap";
 
-import isbnChecker from "../../services/isbnChecker";
+import isbnChecker from "./services/isbnChecker";
 
 export default function IsbnFetcherInput(props) {
     const {value, onFetch} = props;
