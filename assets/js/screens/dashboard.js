@@ -1,5 +1,5 @@
-import "../scss/appSettings.css";
-import Dashboard from "./modules/Dashboard";
+import "../../scss/appSettings.css";
+import Dashboard from "../modules/Dashboard";
 
 const $navLinks = document.querySelectorAll('.nav-link');
 
@@ -13,4 +13,3 @@ const openDashboard = async function (e) {
 }
 
 $navLinks.forEach($navLink => $navLink.addEventListener('click', openDashboard));
-
