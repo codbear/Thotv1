@@ -1,6 +1,6 @@
 import React from "react";
 
-import {AutocompleteDropdownOption} from "../modules/autocomplete-dropdown-option";
+import AutocompleteDropdownOption from "../autocomplete-dropdown-option/AutocompleteDropdownOption";
 
 export default function AutocompleteDropdown({suggestedOptions, inputValue, onClick, focusIndex, onCreateNew}) {
     return (

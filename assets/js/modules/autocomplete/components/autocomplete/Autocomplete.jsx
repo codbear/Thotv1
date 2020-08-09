@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 
-import filterMatchingOptions from "../services/filterMatchingOptions";
+import filterMatchingOptions from "./services/filterMatchingOptions";
 
-import {AutocompleteDropdown} from "../modules/autocomplete-dropdown";
+import AutocompleteDropdown from "../autocomplete-dropdown/AutocompleteDropdown";
 
-import '../styles/autocomplete.scss';
+import './styles/autocomplete.scss';
 
 export default function Autocomplete(props) {
     const {options, label, name, value, placeholder, required, disabled, onMatch, onChange, onCreateNew, isInvalid} = props
