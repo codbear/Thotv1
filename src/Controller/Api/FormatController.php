@@ -3,9 +3,9 @@
 
 namespace App\Controller\Api;
 
+use App\DTO\FormatDTO;
 use App\Entity\Format;
 use App\Repository\FormatRepository;
-use App\ViewModel\FormatDTO;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

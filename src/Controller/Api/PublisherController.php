@@ -3,11 +3,11 @@
 
 namespace App\Controller\Api;
 
+use App\DTO\PublisherDTO;
 use App\Entity\Collection;
 use App\Entity\Publisher;
 use App\Repository\CollectionRepository;
 use App\Repository\PublisherRepository;
-use App\ViewModel\PublisherDTO;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;

@@ -1,5 +1,5 @@
 import Ajax from "./Ajax";
-import Autocomplete from "./Autocomplete";
+import {Autocomplete} from "./autocomplete";
 import React from "react";
 import ReactDom from "react-dom";
 
@@ -20,9 +20,23 @@ export default class Dashboard {
         const $addBtn = $sectionContent.querySelector('#add-btn');
         $addBtn.addEventListener('click', e => this.addRessource(e));
         const $editBtnList = $sectionContent.querySelectorAll('.edit-btn');
-        $editBtnList.forEach($editBtn => $editBtn.addEventListener('click', e => this.editRessource(e)))
+        $editBtnList.forEach($editBtn => {
+            $editBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                const resourceClass = $editBtn.dataset.class;
+                const resourceId = $editBtn.dataset.id;
+                this.editRessource(resourceClass, resourceId)
+            })
+        })
         const $deleteBtnList = $sectionContent.querySelectorAll('.delete-btn');
-        $deleteBtnList.forEach($deleteBtn => $deleteBtn.addEventListener('click', e => this.deleteRessource(e)));
+        $deleteBtnList.forEach($deleteBtn => {
+            $deleteBtn.addEventListener('click', e => {
+                e.stopPropagation();
+                const resourceClass = $deleteBtn.dataset.class;
+                const resourceId = $deleteBtn.dataset.id;
+                this.deleteRessource(resourceClass, resourceId);
+            })
+        });
         this.dashboard.appendChild($sectionContent);
         if (this.sectionToLoad === "collections") {
             this.setupAutocompleteField();
@@ -37,7 +51,7 @@ export default class Dashboard {
 
     addRessource(e) {
         e.preventDefault();
-        let url;
+        let url = this.getUrl(e.target.dataset.class, e.target.dataset.id, 'POST');
         const $newRessourceInput = document.getElementById('newRessource');
         if ($newRessourceInput.value === '') return this.exception('emptyInput');
         let postDatas = {name: $newRessourceInput.value};
@@ -55,13 +69,13 @@ export default class Dashboard {
         request.execute(() => this.displaySection(this.sectionToLoad));
     }
 
-    editRessource(e) {
-        e.preventDefault();
-        let $tableRow = this.getTableRow(e);
-        const url = this.getUrl(e);
+    editRessource(ressourceClass, ressourceId) {
         let submitUrl;
+        const url = this.getUrl(ressourceClass, ressourceId, 'PUT');
         let request = new Ajax(url);
         request.execute((ressource) => {
+            let $button = document.querySelector('[data-id="' + ressourceId + '"]');
+            const $tableRow = this.getTableRowFromButton($button);
             $tableRow.innerHTML = '';
 
             let $inputTd = document.createElement('td');
@@ -129,14 +143,14 @@ export default class Dashboard {
         })
     }
 
-    deleteRessource(e) {
-        e.preventDefault();
-        let request = new Ajax(this.getUrl(e));
+    deleteRessource(ressourceClass, ressourceId) {
+        const url = this.getUrl(ressourceClass, ressourceId, 'DELETE');
+        let request = new Ajax(url);
         request.setMethod('DELETE');
         request.execute(() => {
-            let $table = document.querySelector('tbody');
-            const $tableRow = this.getTableRow(e);
-            $table.removeChild($tableRow);
+            let $button = document.querySelector('[data-id="' + ressourceId + '"]');
+            const $tableRow = this.getTableRowFromButton($button);
+            $tableRow.parentNode.removeChild($tableRow);
         })
     }
 
@@ -145,8 +159,10 @@ export default class Dashboard {
         let request = new Ajax('/api/publishers');
         request.execute((datas) => {
             const onAutocompleteMatch = (selectedOption) => {
-                const $newRessourceParentInput = document.querySelector('#newRessourceParent input');
-                $newRessourceParentInput.dataset.ressourceId = selectedOption.id;
+                if (selectedOption) {
+                    const $newRessourceParentInput = document.querySelector('#newRessourceParent input');
+                    $newRessourceParentInput.dataset.ressourceId = selectedOption.id;
+                }
             };
             const autocompleteCreateNew = (newRessourceName) => {
             };
@@ -159,28 +175,28 @@ export default class Dashboard {
         })
     }
 
-    getUrl(e, verb = 'GET', parentId = null) {
-        switch (e.target.dataset.class) {
+    getUrl(ressourceClass, ressourceId, verb = 'GET', parentId = null) {
+        switch (ressourceClass) {
             case 'collections':
                 switch (verb) {
                     case 'PUT':
-                        return '/api/publishers/' + parentId + '/collections/' + e.target.dataset.id;
+                        return '/api/publishers/' + parentId + '/collections/' + ressourceId;
                     case 'POST':
                         return '/api/publishers/' + parentId + '/collections';
                     default:
-                        return '/api/collections/' + e.target.dataset.id;
+                        return '/api/collections/' + ressourceId;
                 }
             default:
                 switch (verb) {
                     case 'POST':
-                        return '/api/' + e.target.dataset.class;
+                        return '/api/' + ressourceClass;
                     default:
-                        return '/api/' + e.target.dataset.class + '/' + e.target.dataset.id;
+                        return '/api/' + ressourceClass + '/' + ressourceId;
                 }
         }
     }
 
-    getTableRow(e) {
-        return e.target.parentNode.parentNode;
+    getTableRowFromButton(buttonElement) {
+        return buttonElement.parentNode.parentNode;
     }
 }

@@ -1,0 +1,14 @@
+{
+  "header_message": {
+    "default": "Des détails de ce livre n'existent pas dans votre base de données et doivent d'abord être créés.",
+    "only_author": "L'auteur de ce livre n'existe pas dans votre base de données et doit d'abord être créé.",
+    "only_genre": "Le genre de ce livre n'existe pas dans votre base de données et doit d'abord être créé.",
+    "only_publisher": "L'éditeur de ce livre n'existe pas dans votre base de données et doit d'abord être créé."
+  },
+  "helper_message": {
+    "default": "Saisissez du texte dans le champ d'un détail ci-dessous pour le modifier ou pour rechercher une correspondance dans votre base de données.",
+    "only_author": "Vous pouvez modifier l'auteur dans le champ ci-dessous ou rechercher une correspondance dans votre base de données.",
+    "only_genre": "Vous pouvez modifier le genre dans le champ ci-dessous ou rechercher une correspondance dans votre base de données.",
+    "only_publisher": "Vous pouvez modifier l'éditeur dans le champ ci-dessous ou rechercher une correspondance dans votre base de données."
+  }
+}

@@ -2,9 +2,9 @@
 
 namespace App\Interfaces;
 
-use App\ViewModel\BookViewModel;
+use App\DTO\BookDTO;
 
 interface BookDetailsFetcherInterface
 {
-    public function request(int $isbn): BookViewModel;
+    public function request(int $isbn): BookDTO;
 }

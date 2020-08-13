@@ -3,9 +3,9 @@
 
 namespace App\Controller\Api;
 
+use App\DTO\AuthorDTO;
 use App\Entity\Author;
 use App\Repository\AuthorRepository;
-use App\ViewModel\AuthorDTO;
 use FOS\RestBundle\Controller\Annotations as Rest;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
