@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 
 export default function FormGroup(props) {
     const {name, label, type, value, rows, onChange} = props;
-    const [inputValue, setInputValue] = useState(value);
+    const [inputValue, setInputValue] = useState(value || '');
 
     function handleChange(event) {
         const newInputValue = event.target.value;

@@ -12,12 +12,14 @@ import CollectionsInput from '../collections-input/CollectionsInput';
 import SubmitButton from '../buttons/SubmitButton';
 import IsbnFetcherInput from '../isbn-fetcher-input/IsbnFetcherInput';
 import CreateDetailPopIn from "../create-detail-pop-in/CreateDetailPopIn";
+import BookMutationSuccessPopin from "../book-mutation-success-popin/BookMutationSuccessPopin";
 
 /* Hooks & Services */
 import isbnFetcher from './services/isbnFetcher';
 import apiFetcher from '../../../../services/apiFetcher';
 import isMatching from "./services/isMatching";
 import useCreateBook from "../../../sdk/hooks/useCreateBook";
+import useUpdateBook from "../../../sdk/hooks/useUpdateBook";
 
 /* Reducers */
 import bookDetailsReducer from "./reducers/bookDetailsReducer";
@@ -25,8 +27,6 @@ import highLevelDetailsReducer from "../../reducers/highLevelDetailsReducer";
 
 /* Styles */
 import './styles/bookForm.scss'
-import BookCreationSuccessPopin from "../book-creation-success-popin/BookCreationSuccessPopin";
-import useUpdateBook from "../../../sdk/hooks/useUpdateBook";
 
 export default function BookForm({book}) {
     const [formStatus, setFormStatus] = useState('loading');
@@ -89,16 +89,25 @@ export default function BookForm({book}) {
             let mutateBook;
             if (bookDetails.id) {
                 mutateBook = await updateBook(bookDetails);
+
+                if (!mutateBook.id) {
+                    throw new Error('Une erreur est survenue lors de la modification du livre, veuillez réessayer');
+                }
+
+                setMessage('Le livre a été modifié avec succès.');
+
+                return setFormStatus('bookSuccessfullyUpdated');
             } else {
                 mutateBook = await createNewBook(bookDetails);
-            }
 
-            if (!mutateBook.id) {
-                throw new Error('Une erreur est survenue lors de l\'ajout du livre, veuillez réessayer');
-            }
+                if (!mutateBook.id) {
+                    throw new Error('Une erreur est survenue lors de l\'ajout du livre, veuillez réessayer');
+                }
 
-            setMessage('Le livre a été ajouté à votre bibliothèque. Que voulez-vous faire maintenant ?');
-            return setFormStatus('bookSuccessfullyCreated');
+                setMessage('Le livre a été ajouté à votre bibliothèque. Que voulez-vous faire maintenant ?');
+
+                return setFormStatus('bookSuccessfullyCreated');
+            }
         } catch (e) {
             setMessage(e.message || 'Une erreur est survenue lors de l\'enregistrement en base de données, veuillez réessayer');
             setFormStatus('bookCreationError');
@@ -225,9 +234,14 @@ export default function BookForm({book}) {
                 onClose={reloadForm}/>
         ),
         bookSuccessfullyCreated: (
-            <BookCreationSuccessPopin
+            <BookMutationSuccessPopin
                 message={message}
                 onCreateOneMore={resetForm}
+                onClose={goBackHome}/>
+        ),
+        bookSuccessfullyUpdated: (
+            <BookMutationSuccessPopin
+                message={message}
                 onClose={goBackHome}/>
         ),
         loading: (

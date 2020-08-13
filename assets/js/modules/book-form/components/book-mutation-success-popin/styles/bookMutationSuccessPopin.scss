@@ -1,4 +1,4 @@
-.error-box {
+.popin {
   position: fixed;
   display: flex;
   align-items: center;
@@ -12,7 +12,7 @@
   animation: fadeIn .3s both;
 }
 
-.error-box-wrapper {
+.popin-wrapper {
   margin-top: 74px;
   padding: 20px;
   display: flex;
@@ -20,21 +20,20 @@
   justify-content: space-between;
   align-items: center;
   width: 600px;
-  height: 250px;
   max-width: calc(100vw - 20px);
   max-height: calc(100vh - 20px);
-  background-color: #fff;
+  overflow: auto;
   border-radius: 15px;
   animation: slideFromTop .3s both;
 }
 
-.error-box-header {
+.popin-header {
   margin-bottom: 20px;
   font-family: 'Roboto', sans-serif;
   text-transform: capitalize;
 }
 
-.error-box-content {
+.popin-content {
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
@@ -43,12 +42,12 @@
   overflow: auto;
 }
 
-.error-box-action {
+.popin-action {
   display: flex;
   justify-content: flex-end;
   width: 100%;
 }
 
-.error-box-action button {
+.popin-action button {
   margin-left: 20px;
 }
