@@ -1,7 +1,7 @@
 /* Dependencies */
 import React, {useReducer, useState} from 'react';
 import {useQuery} from 'react-query';
-import {Col, Form, Row} from 'react-bootstrap';
+import {Col, Form, Image, Row} from 'react-bootstrap';
 
 /* Modules */
 import {Loader} from '../../../loader';
@@ -17,6 +17,7 @@ import CreateDetailPopIn from "../create-detail-pop-in/CreateDetailPopIn";
 import isbnFetcher from './services/isbnFetcher';
 import apiFetcher from '../../../../services/apiFetcher';
 import isMatching from "./services/isMatching";
+import useCreateBook from "../../../sdk/hooks/useCreateBook";
 
 /* Reducers */
 import bookDetailsReducer from "./reducers/bookDetailsReducer";
@@ -24,7 +25,7 @@ import highLevelDetailsReducer from "../../reducers/highLevelDetailsReducer";
 
 /* Styles */
 import './styles/bookForm.scss'
-import useCreateBook from "../../../sdk/hooks/useCreateBook";
+import BookCreationSuccessPopin from "../../book-creation-success-popin/BookCreationSuccessPopin";
 
 export default function BookForm({book}) {
     const [bookDetails, dispatchBookDetails] = useReducer(bookDetailsReducer, book);
@@ -69,26 +70,53 @@ export default function BookForm({book}) {
         setFormStatus('loading');
     }
 
+    function resetForm() {
+        window.location = '/book/new';
+    }
+
     function goBackHome() {
         window.location = '/';
     }
 
-    function onSubmit() {
+    async function onSubmit() {
         console.log(bookDetails);
-        createNewBook(bookDetails);
+        try {
+            const createdBook = await createNewBook(bookDetails);
+
+            if (!createdBook.id) {
+                throw new Error('Une erreur est survenue lors de l\'ajout du livre, veuillez réessayer');
+            }
+
+            setMessage('Le livre a été ajouté à votre bibliothèque. Que voulez-vous faire maintenant ?');
+            return setFormStatus('bookSuccessfullyCreated');
+        } catch (e) {
+            setMessage(e.message || 'Une erreur est survenue lors de l\'ajout du livre, veuillez réessayer');
+            setFormStatus('bookCreationError');
+        }
     }
 
     async function onIsbnFetch(isbn) {
         setFormStatus('loading');
         setIsbnToFetch(isbn);
         try {
-            let bookDetails = await isbnFetcher(isbn);
+            let fetchedDetails = await isbnFetcher(isbn);
 
-            if (bookDetails.title === null) {
+            if (fetchedDetails.title === null) {
                 throw new Error('Aucun résultat disponible pour le numéro ISBN fourni.');
             }
 
-            const {author, publisher, genre} = bookDetails;
+            dispatchBookDetails({type: 'setIsbn', payload: isbn});
+            dispatchBookDetails({type: 'setTitle', payload: fetchedDetails.title});
+
+            if (fetchedDetails.description !== null) {
+                dispatchBookDetails({type: 'setDescription', payload: fetchedDetails.description});
+            }
+
+            if (fetchedDetails.publicationYear !== null) {
+                dispatchBookDetails({type: 'setPublicationYear', payload: fetchedDetails.publicationYear});
+            }
+
+            const {author, publisher, genre} = fetchedDetails;
 
             const authorInDb = author.name
                 ? authorsIndex.find(isMatching(author))
@@ -100,16 +128,17 @@ export default function BookForm({book}) {
                 ? genresIndex.find(isMatching(genre))
                 : undefined;
 
-            bookDetails.author = authorInDb ?? author;
-            bookDetails.publisher = publisherInDb ?? publisher;
-            bookDetails.genre = genreInDb ?? genre;
+            fetchedDetails.author = authorInDb ?? author;
+            fetchedDetails.publisher = publisherInDb ?? publisher;
+            fetchedDetails.genre = genreInDb ?? genre;
 
-            dispatchBookDetails({type: 'setBookDetails', payload: bookDetails});
-            dispatchBookDetails({type: 'setIsbn', payload: isbn});
+            dispatchBookDetails({type: 'setAuthor', payload: fetchedDetails.author});
+            dispatchBookDetails({type: 'setPublisher', payload: fetchedDetails.publisher});
+            dispatchBookDetails({type: 'setGenre', payload: fetchedDetails.genre});
 
-            const shouldReviewAuthor = bookDetails.author.name !== null && bookDetails.author.id === null;
-            const shouldReviewPublisher = bookDetails.publisher.name !== null && bookDetails.publisher.id === null;
-            const shouldReviewGenre = bookDetails.genre.name !== null && bookDetails.genre.id === null;
+            const shouldReviewAuthor = fetchedDetails.author.name !== null && fetchedDetails.author.id === null;
+            const shouldReviewPublisher = fetchedDetails.publisher.name !== null && fetchedDetails.publisher.id === null;
+            const shouldReviewGenre = fetchedDetails.genre.name !== null && fetchedDetails.genre.id === null;
             const shouldReviewDetails = shouldReviewAuthor || shouldReviewPublisher || shouldReviewGenre;
 
             if (shouldReviewDetails) {
@@ -150,6 +179,10 @@ export default function BookForm({book}) {
         return setFormStatus('success');
     }
 
+    let bookCoverImageSrc = '/img/book_cover_placeholder.png'
+    if (bookDetails.isbn) {
+        bookCoverImageSrc = "https://pictures.abebooks.com/isbn/" + bookDetails.isbn + "-us-300.jpg"
+    }
     const statusToContent = {
         isbnError: (
             <ErrorBox
@@ -172,6 +205,18 @@ export default function BookForm({book}) {
                 onRetry={reloadForm}
                 onClose={goBackHome}/>
         ),
+        bookCreationError: (
+            <ErrorBox
+                message={message}
+                onRetry={onSubmit}
+                onClose={reloadForm}/>
+        ),
+        bookSuccessfullyCreated: (
+            <BookCreationSuccessPopin
+                message={message}
+                onCreateOneMore={resetForm}
+                onClose={goBackHome}/>
+        ),
         loading: (
             <Loader visible light/>
         ),
@@ -179,17 +224,15 @@ export default function BookForm({book}) {
             <React.Fragment>
                 <Form>
                     <Row>
-                        <Col>
-                            <Row>
-
-                            </Row>
+                        <Col lg={4} id="book-cover-container">
+                            <Image src={bookCoverImageSrc} rounded/>
+                        </Col>
+                        <Col lg={{span: 7, offset: 5}}>
                             <Row>
                                 <IsbnFetcherInput
                                     value={bookDetails.isbn}
                                     onFetch={onIsbnFetch}/>
                             </Row>
-                        </Col>
-                        <Col>
                             <Row>
                                 <FormGroup
                                     name="book_title"
@@ -249,24 +292,24 @@ export default function BookForm({book}) {
                                     value={bookDetails.format}
                                     onMatch={(format) => dispatchBookDetails({type: 'setFormat', payload: format})}/>
                             </Row>
+                            <Row>
+                                <FormGroup
+                                    name="book_description"
+                                    label="Description"
+                                    type="textarea"
+                                    value={bookDetails.description}/>
+                            </Row>
+                            <Row>
+                                <FormGroup
+                                    name="book_observations"
+                                    label="Observations"
+                                    type="textarea"
+                                    value={bookDetails.observations}/>
+                            </Row>
+                            <Row>
+                                <SubmitButton onSubmit={onSubmit}/>
+                            </Row>
                         </Col>
-                    </Row>
-                    <Row>
-                        <FormGroup
-                            name="book_description"
-                            label="Description"
-                            type="textarea"
-                            value={bookDetails.description}/>
-                    </Row>
-                    <Row>
-                        <FormGroup
-                            name="book_observations"
-                            label="Observations"
-                            type="textarea"
-                            value={bookDetails.observations}/>
-                    </Row>
-                    <Row>
-                        <SubmitButton onSubmit={onSubmit}/>
                     </Row>
                 </Form>
             </React.Fragment>
@@ -308,8 +351,8 @@ BookForm.defaultProps = {
             id: undefined,
             name: '',
         },
-        isEbook: false,
-        hasBeenRead: false,
+        is_ebook: false,
+        has_been_read: true,
         observations: '',
     }
 }
