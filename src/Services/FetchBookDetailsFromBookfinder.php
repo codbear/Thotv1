@@ -28,6 +28,7 @@ class FetchBookDetailsFromBookfinder implements BookDetailsFetcherInterface
             $explodedPublisherString = explode(",", $publisherElement);
             $publisher->setName($explodedPublisherString[0]);
             $book->setPublisher($publisher);
+            $book->setPublicationYear((int)$explodedPublisherString[1]);
         }
 
         return $book;
