@@ -37,7 +37,7 @@ export default function CreateDetailPopIn(props) {
         if (detailsSuccessfullyCreated) {
             onCreate(createdDetails);
         }
-    }, [onCreate, createdDetails])
+    }, [onCreate, createdDetails, authorMustBeCreated, genreMustBeCreated, publisherMustBeCreated])
 
     function getBookDetailsDispatcherByType(actionType) {
         return (actionPayload) => {
