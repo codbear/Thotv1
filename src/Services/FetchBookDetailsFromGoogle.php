@@ -5,6 +5,8 @@ namespace App\Services;
 
 
 use App\DTO\BookDTO;
+use App\Entity\Author;
+use App\Entity\Publisher;
 use App\Interfaces\BookDetailsFetcherInterface;
 
 class FetchBookDetailsFromGoogle implements BookDetailsFetcherInterface
@@ -16,14 +18,18 @@ class FetchBookDetailsFromGoogle implements BookDetailsFetcherInterface
         $response = file_get_contents($request);
         $results = json_decode($response);
         $book = new BookDTO();
+        $author = new Author();
+        $publisher = new Publisher();
 
         if ($results->totalItems > 0) {
             $bookDetails = $results->items[0];
             $book->setTitle($bookDetails->volumeInfo->title ?? null);
-            $book->setAuthor($bookDetails->volumeInfo->authors[0] ?? null);
             $book->setDescription($bookDetails->volumeInfo->description ?? null);
-            $book->setPublisher($bookDetails->volumeInfo->publisher ?? null);
             $book->setPublicationYear((int)substr($bookDetails->volumeInfo->publishedDate, 0, 4) ?? null);
+            $author->setName($bookDetails->volumeInfo->authors[0] ?? null);
+            $book->setAuthor($author);
+            $publisher->setName($bookDetails->volumeInfo->publisher ?? null);
+            $book->setPublisher($publisher);
         }
 
         return $book;

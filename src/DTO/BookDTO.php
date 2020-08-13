@@ -4,7 +4,12 @@
 namespace App\DTO;
 
 
+use App\Entity\Author;
 use App\Entity\Book;
+use App\Entity\Collection;
+use App\Entity\Format;
+use App\Entity\Genre;
+use App\Entity\Publisher;
 
 class BookDTO
 {
@@ -26,6 +31,12 @@ class BookDTO
 
     public function __construct(Book $bookEntity = null)
     {
+        $this->setAuthor(new Author());
+        $this->setGenre(new Genre());
+        $this->setPublisher(new Publisher());
+        $this->setCollection(new Collection());
+        $this->setFormat(new Format());
+
         if ($bookEntity) {
             $this->setId($bookEntity->getId());
             $this->setTitle($bookEntity->getTitle());
@@ -37,11 +48,11 @@ class BookDTO
             $this->setIsEbook($bookEntity->getIsEbook());
             $this->setPublicationYear($bookEntity->getPublicationYear());
             $this->setCreatedAt($bookEntity->getCreatedAt());
-            $this->setAuthor($bookEntity->getAuthor()->getName());
-            $this->setGenre($bookEntity->getGenre()->getName());
-            $this->setFormat($bookEntity->getFormat()->getName());
-            $this->setPublisher($bookEntity->getCollection()->getPublisher()->getName());
-            $this->setCollection($bookEntity->getCollection()->getName());
+            $this->setAuthor($bookEntity->getAuthor());
+            $this->setGenre($bookEntity->getGenre());
+            $this->setFormat($bookEntity->getFormat());
+            $this->setPublisher($bookEntity->getCollection()->getPublisher());
+            $this->setCollection($bookEntity->getCollection());
         }
     }
 
@@ -54,10 +65,10 @@ class BookDTO
     }
 
     /**
-     * @param mixed $author
+     * @param Author $author
      * @return BookDTO
      */
-    public function setAuthor($author)
+    public function setAuthor(Author $author)
     {
         $this->author = $author;
         return $this;
@@ -72,10 +83,10 @@ class BookDTO
     }
 
     /**
-     * @param mixed $collection
+     * @param Collection $collection
      * @return BookDTO
      */
-    public function setCollection($collection)
+    public function setCollection(Collection $collection)
     {
         $this->collection = $collection;
         return $this;
@@ -126,10 +137,10 @@ class BookDTO
     }
 
     /**
-     * @param mixed $format
+     * @param Format $format
      * @return BookDTO
      */
-    public function setFormat($format)
+    public function setFormat(Format $format)
     {
         $this->format = $format;
         return $this;
@@ -144,10 +155,10 @@ class BookDTO
     }
 
     /**
-     * @param mixed $genre
+     * @param Genre $genre
      * @return BookDTO
      */
-    public function setGenre($genre)
+    public function setGenre(Genre $genre)
     {
         $this->genre = $genre;
         return $this;
@@ -270,10 +281,10 @@ class BookDTO
     }
 
     /**
-     * @param mixed $publisher
+     * @param Publisher $publisher
      * @return BookDTO
      */
-    public function setPublisher($publisher)
+    public function setPublisher(Publisher $publisher)
     {
         $this->publisher = $publisher;
         return $this;
