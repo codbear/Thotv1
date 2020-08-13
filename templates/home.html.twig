@@ -17,8 +17,10 @@
     <div class="container-fluid">
         <div class="card-deck mt-3">
             {% for book in books %}
+
+                {% set coverImageSrc = book.isbn ? "https://pictures.abebooks.com/isbn/" ~ book.isbn ~ "-us-300.jpg" : asset('img/book_cover_placeholder.png') %}
                 <div class="card book-card" data-bookid="{{ book.id }}">
-                    <img src="{{ asset('img/book_cover_placeholder.png') }}" alt="" class="card-img-top">
+                    <img src="{{ coverImageSrc }}" alt="" class="card-img-top">
                     <div class="card-body text-dark">
                         <div class="card-title">{{ book.title }}</div>
                         <div class="card-text">{{ book.author }}</div>
