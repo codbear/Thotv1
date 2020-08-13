@@ -25,10 +25,10 @@ import highLevelDetailsReducer from "../../reducers/highLevelDetailsReducer";
 
 /* Styles */
 import './styles/bookForm.scss'
-import BookCreationSuccessPopin from "../../book-creation-success-popin/BookCreationSuccessPopin";
+import BookCreationSuccessPopin from "../book-creation-success-popin/BookCreationSuccessPopin";
+import useUpdateBook from "../../../sdk/hooks/useUpdateBook";
 
 export default function BookForm({book}) {
-    const [bookDetails, dispatchBookDetails] = useReducer(bookDetailsReducer, book);
     const [formStatus, setFormStatus] = useState('loading');
     const [isbnToFetch, setIsbnToFetch] = useState(undefined);
     const [message, setMessage] = useState(undefined);
@@ -37,15 +37,21 @@ export default function BookForm({book}) {
         genre: undefined,
         publisher: undefined
     });
+    const [bookDetails, dispatchBookDetails] = useReducer(bookDetailsReducer, book);
+
+    function getBookDetailsDispatcherForAction(actionType) {
+        return (payload) => dispatchBookDetails({type: actionType, payload: payload});
+    }
 
     const createNewBook = useCreateBook();
+    const updateBook = useUpdateBook();
 
     const highLevelDetailsQuery = useQuery('highLevelDetails', () =>
-            Promise.all([
-                apiFetcher('/api/authors'),
-                apiFetcher('/api/genres'),
-                apiFetcher('/api/publishers'),
-                apiFetcher('/api/formats'),
+        Promise.all([
+            apiFetcher('/api/authors'),
+            apiFetcher('/api/genres'),
+            apiFetcher('/api/publishers'),
+            apiFetcher('/api/formats'),
             ]), {
             onSuccess: () => {
                 setFormStatus('success')
@@ -79,18 +85,22 @@ export default function BookForm({book}) {
     }
 
     async function onSubmit() {
-        console.log(bookDetails);
         try {
-            const createdBook = await createNewBook(bookDetails);
+            let mutateBook;
+            if (bookDetails.id) {
+                mutateBook = await updateBook(bookDetails);
+            } else {
+                mutateBook = await createNewBook(bookDetails);
+            }
 
-            if (!createdBook.id) {
+            if (!mutateBook.id) {
                 throw new Error('Une erreur est survenue lors de l\'ajout du livre, veuillez réessayer');
             }
 
             setMessage('Le livre a été ajouté à votre bibliothèque. Que voulez-vous faire maintenant ?');
             return setFormStatus('bookSuccessfullyCreated');
         } catch (e) {
-            setMessage(e.message || 'Une erreur est survenue lors de l\'ajout du livre, veuillez réessayer');
+            setMessage(e.message || 'Une erreur est survenue lors de l\'enregistrement en base de données, veuillez réessayer');
             setFormStatus('bookCreationError');
         }
     }
@@ -100,6 +110,8 @@ export default function BookForm({book}) {
         setIsbnToFetch(isbn);
         try {
             let fetchedDetails = await isbnFetcher(isbn);
+
+            console.log(fetchedDetails);
 
             if (fetchedDetails.title === null) {
                 throw new Error('Aucun résultat disponible pour le numéro ISBN fourni.');
@@ -112,8 +124,8 @@ export default function BookForm({book}) {
                 dispatchBookDetails({type: 'setDescription', payload: fetchedDetails.description});
             }
 
-            if (fetchedDetails.publicationYear !== null) {
-                dispatchBookDetails({type: 'setPublicationYear', payload: fetchedDetails.publicationYear});
+            if (fetchedDetails.publication_year !== null) {
+                dispatchBookDetails({type: 'setPublicationYear', payload: fetchedDetails.publication_year});
             }
 
             const {author, publisher, genre} = fetchedDetails;
@@ -183,6 +195,7 @@ export default function BookForm({book}) {
     if (bookDetails.isbn) {
         bookCoverImageSrc = "https://pictures.abebooks.com/isbn/" + bookDetails.isbn + "-us-300.jpg"
     }
+
     const statusToContent = {
         isbnError: (
             <ErrorBox
@@ -231,46 +244,42 @@ export default function BookForm({book}) {
                             <Row>
                                 <IsbnFetcherInput
                                     value={bookDetails.isbn}
-                                    onFetch={onIsbnFetch}/>
+                                    onFetch={onIsbnFetch}
+                                    onChange={getBookDetailsDispatcherForAction('setIsbn')}/>
                             </Row>
                             <Row>
                                 <FormGroup
                                     name="book_title"
                                     label="Titre"
                                     type="text"
-                                    value={bookDetails.title}/>
+                                    value={bookDetails.title}
+                                    onChange={getBookDetailsDispatcherForAction('setTitle')}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
                                     detailName="authors"
                                     options={authorsIndex}
                                     value={bookDetails.author}
-                                    onMatch={(author) => dispatchBookDetails({type: 'setAuthor', payload: author})}/>
+                                    onMatch={getBookDetailsDispatcherForAction('setAuthor')}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
                                     detailName="genres"
                                     options={genresIndex}
                                     value={bookDetails.genre}
-                                    onMatch={(genre) => dispatchBookDetails({type: 'setGenre', payload: genre})}/>
+                                    onMatch={getBookDetailsDispatcherForAction('setGenre')}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
                                     detailName="publishers"
                                     options={publishersIndex}
                                     value={bookDetails.publisher}
-                                    onMatch={(publisher) => dispatchBookDetails({
-                                        type: 'setPublisher',
-                                        payload: publisher
-                                    })}/>
+                                    onMatch={getBookDetailsDispatcherForAction('setPublisher')}/>
                             </Row>
                             <Row>
                                 <CollectionsInput
                                     value={bookDetails.collection}
-                                    onMatch={(collection) => dispatchBookDetails({
-                                        type: 'setCollection',
-                                        payload: collection
-                                    })}
+                                    onMatch={getBookDetailsDispatcherForAction('setCollection')}
                                     publisher={bookDetails.publisher}/>
                             </Row>
                             <Row>
@@ -278,33 +287,37 @@ export default function BookForm({book}) {
                                     name="book_volume"
                                     label="Tome"
                                     type="number"
-                                    value={bookDetails.volume}/>
+                                    value={bookDetails.volume}
+                                    onChange={getBookDetailsDispatcherForAction('setVolume')}/>
                                 <FormGroup
                                     name="book_publication_year"
                                     label="Année de parution"
                                     type="number"
-                                    value={bookDetails.publicationYear}/>
+                                    value={bookDetails.publication_year}
+                                    onChange={getBookDetailsDispatcherForAction('setPublicationYear')}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
                                     detailName="formats"
                                     options={formatsIndex}
                                     value={bookDetails.format}
-                                    onMatch={(format) => dispatchBookDetails({type: 'setFormat', payload: format})}/>
+                                    onMatch={getBookDetailsDispatcherForAction('setFormat')}/>
                             </Row>
                             <Row>
                                 <FormGroup
                                     name="book_description"
                                     label="Description"
                                     type="textarea"
-                                    value={bookDetails.description}/>
+                                    value={bookDetails.description}
+                                    onChange={getBookDetailsDispatcherForAction('setDescription')}/>
                             </Row>
                             <Row>
                                 <FormGroup
                                     name="book_observations"
                                     label="Observations"
                                     type="textarea"
-                                    value={bookDetails.observations}/>
+                                    value={bookDetails.observations}
+                                    onChange={getBookDetailsDispatcherForAction('setObservations')}/>
                             </Row>
                             <Row>
                                 <SubmitButton onSubmit={onSubmit}/>
@@ -337,7 +350,7 @@ BookForm.defaultProps = {
             id: undefined,
             name: '',
         },
-        publicationYear: '',
+        publication_year: '',
         collection: {
             id: undefined,
             name: '',
