@@ -13,7 +13,7 @@ export default function bookDetailsReducer(state, action) {
         case 'setPublisher':
             return {...state, publisher: action.payload}
         case 'setPublicationYear':
-            return {...state, publicationYear: action.payload}
+            return {...state, publication_year: action.payload}
         case 'setCollection':
             return {...state, collection: action.payload}
         case 'setGenre':
@@ -23,9 +23,9 @@ export default function bookDetailsReducer(state, action) {
         case 'setFormat':
             return {...state, format: action.payload}
         case 'setIsEbook':
-            return {...state, isEbook: action.payload}
+            return {...state, is_ebook: action.payload}
         case 'setHasBeenRead':
-            return {...state, hasBeenRead: action.payload}
+            return {...state, has_been_read: action.payload}
         case 'setObservations':
             return {...state, observations: action.payload}
         case 'setBookDetails':

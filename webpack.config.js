@@ -26,6 +26,7 @@ Encore
     .addEntry('app', './assets/js/app.js')
     .addEntry('homepage', './assets/js/screens/home.js')
     .addEntry('newBook', './assets/js/screens/book/bookCreate.jsx')
+    .addEntry('bookUpdate', './assets/js/screens/book/bookUpdate.jsx')
     .addEntry('appSettings', './assets/js/screens/dashboard.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.

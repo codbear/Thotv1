@@ -25,10 +25,8 @@ export default function ErrorBox(props) {
                 </Button>
                 {closeButton}
             </React.Fragment>
-        ) :
-        (
-            {closeButton}
-        );
+        )
+        : {closeButton};
 
     return (
         <div

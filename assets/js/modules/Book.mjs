@@ -26,6 +26,7 @@ class Book {
         request.execute((book) => {
             this.setDetails(book);
             this.listenDeleteBtn();
+            this.listenEditBtn();
             this.toggleLoader();
             this.toggleBookDetails();
         }, (statusCode, statusText) => {
@@ -40,6 +41,13 @@ class Book {
         let $deleteBtn = document.getElementById('book-delete');
         $deleteBtn.addEventListener('click', (e) => {
             this.delete(e)
+        }, {once: true})
+    }
+
+    listenEditBtn() {
+        let $editBtn = document.getElementById('book-edit');
+        $editBtn.addEventListener('click', () => {
+            window.location = '/book/update/' + this.bookId;
         }, {once: true})
     }
 

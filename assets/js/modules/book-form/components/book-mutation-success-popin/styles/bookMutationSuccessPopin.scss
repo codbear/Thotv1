@@ -1,0 +1,25 @@
+.popin {
+  position: fixed;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  animation: fadeIn .3s both;
+}
+
+.popin-wrapper {
+  margin-top: 74px;
+  padding: 20px;
+  align-items: center;
+  width: 600px;
+  max-width: calc(100vw - 20px);
+  max-height: calc(100vh - 20px);
+  overflow: auto;
+  border-radius: 15px;
+  animation: slideFromTop .3s both;
+}

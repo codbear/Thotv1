@@ -2,11 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Book;
-use App\Form\BookType;
-use DateTime;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -17,29 +13,21 @@ class BookController extends AbstractController
 {
     /**
      * @Route("/new", name="book_new", methods={"GET","POST"})
-     * @param Request $request
-     * @return Response
-     * @throws Exception
      */
-    public function new(Request $request): Response
+    public function new()
     {
-        $book = new Book();
-        $form = $this->createForm(BookType::class, $book);
-        $form->handleRequest($request);
+        return $this->render('book/new.html.twig');
+    }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $book->setCreatedAt(new DateTime());
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($book);
-            $entityManager->flush();
-            $this->addFlash('success', 'Le livre à été ajouté à la bibliothèque');
-
-            return $this->redirectToRoute('home');
-        }
-
-        return $this->render('book/new.html.twig', [
-            'book' => $book,
-            'form' => $form->createView(),
+    /**
+     * @Route("/update/{id}", name="book_update", methods={"GET","POST"})
+     * @param $id
+     * @return Response
+     */
+    public function update($id)
+    {
+        return $this->render('book/update.html.twig', [
+            'bookId' => $id,
         ]);
     }
 }
