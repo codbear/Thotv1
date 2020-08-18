@@ -10,6 +10,7 @@ use App\Entity\Collection;
 use App\Entity\Format;
 use App\Entity\Genre;
 use App\Repository\AuthorRepository;
+use App\Repository\BookRepository;
 use App\Repository\CollectionRepository;
 use App\Repository\FormatRepository;
 use App\Repository\GenreRepository;
@@ -63,6 +64,17 @@ class BookController extends AbstractController
         $this->genreRepository = $genreRepository;
         $this->collectionRepository = $collectionRepository;
         $this->formatRepository = $formatRepository;
+    }
+
+    /**
+     * @Rest\View()
+     * @Rest\Get("/api/books")
+     * @param BookRepository $bookRepository
+     * @return Book[]
+     */
+    public function index(BookRepository $bookRepository)
+    {
+        return $bookRepository->findAll();
     }
 
     /**
