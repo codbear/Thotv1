@@ -1,31 +1,11 @@
 import React from "react";
-import {Alert, Button} from "react-bootstrap";
+import {Alert} from '@material-ui/lab';
+import CheckIcon from '@material-ui/icons/Check';
 
 import './styles/bookMutationSuccessPopin.scss';
 
 export default function BookMutationSuccessPopin(props) {
-    const {message, onCreateOneMore, onClose} = props;
-
-    const closeButton = (
-        <Button
-            onClick={onClose}
-            variant="outline-dark">
-            Fermer
-        </Button>
-    )
-
-    const popinActions = onCreateOneMore ?
-        (
-            <React.Fragment>
-                <Button
-                    onClick={onCreateOneMore}
-                    variant="outline-success">
-                    Ajouter un nouveau livre
-                </Button>
-                {closeButton}
-            </React.Fragment>
-        )
-        : closeButton;
+    const {message, onClose} = props;
 
     return (
         <div
@@ -34,13 +14,11 @@ export default function BookMutationSuccessPopin(props) {
             aria-labelledby="titleModal">
             <Alert
                 className="popin-wrapper"
-                variant="success">
-                <div className="popin-content">
-                    {message}
-                </div>
-                <div className="popin-action">
-                    {popinActions}
-                </div>
+                icon={<CheckIcon fontSize="inherit"/>}
+                severity="success"
+                variant="filled"
+                onClose={onClose}>
+                {message}
             </Alert>
         </div>
     )

@@ -1,6 +1,6 @@
-import useCreateBook from "./useCreateBook";
+import useMutateBookByMethod from "./useMutateBookByMethod";
 
 export default function useUpdateBook() {
 
-    return useCreateBook('PUT');
+    return useMutateBookByMethod('PUT');
 }

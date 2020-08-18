@@ -18,7 +18,7 @@ import BookMutationSuccessPopin from "../book-mutation-success-popin/BookMutatio
 import isbnFetcher from './services/isbnFetcher';
 import apiFetcher from '../../../../services/apiFetcher';
 import isMatching from "./services/isMatching";
-import useCreateBook from "../../../sdk/hooks/useCreateBook";
+import useMutateBookByMethod from "../../../sdk/hooks/useMutateBookByMethod";
 import useUpdateBook from "../../../sdk/hooks/useUpdateBook";
 
 /* Reducers */
@@ -43,7 +43,7 @@ export default function BookForm({book}) {
         return (payload) => dispatchBookDetails({type: actionType, payload: payload});
     }
 
-    const createNewBook = useCreateBook();
+    const createNewBook = useMutateBookByMethod();
     const updateBook = useUpdateBook();
 
     const highLevelDetailsQuery = useQuery('highLevelDetails', () =>
