@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title 'Dashboard' %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('appSettings') }}
+{% endblock %}
+
+{% block actionsBtn %}
+    <a href="{{ path('home') }}" title="Accueil" class="btn btn-link"><i class="fas fa-home fa-2x text-dark"></i></a>
+{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        {% include "dashboard/_navbar.html.twig" %}
+        <section id="dashboard"></section>
+    </div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('appSettings') }}
+{% endblock %}

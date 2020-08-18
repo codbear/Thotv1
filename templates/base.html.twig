@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <title>Thot | {% block title %}{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css?family=Oregano|Roboto&display=swap" rel="stylesheet">
+    {{ encore_entry_link_tags('app') }}
+    {% block stylesheets %}{% endblock %}
+    <script src="https://kit.fontawesome.com/623ce0720c.js" crossorigin="anonymous"></script>
+</head>
+<body class="bg-dark text-light">
+<div id="testMenu"></div>
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+    <div class="col-4">
+        {% block actionsBtn %}{% endblock %}
+    </div>
+    <div class="col-4 text-center">
+        <h1 class="navbar-brand">Thot</h1>
+    </div>
+    <div class="col-4">
+    </div>
+</nav>
+
+{% for type, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-{{ type }} mt-5">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endfor %}
+
+{% block body %}{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
+{% endblock %}
+</body>
+</html>
