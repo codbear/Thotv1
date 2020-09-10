@@ -6,7 +6,7 @@ import CollectionsAutocompleteContainer from "../collections-autocomplete-contai
 import {Autocomplete} from "../../../autocomplete";
 
 export default function CollectionsInput(props) {
-    const {onMatch, publisher, value} = props;
+    const {onMatch, publisher, value, requiredFieldLocker} = props;
 
     let content;
 
@@ -18,7 +18,8 @@ export default function CollectionsInput(props) {
             <CollectionsAutocompleteContainer
                 publisherId={publisher.id}
                 value={value || ''}
-                onMatch={onMatch}/>
+                onMatch={onMatch}
+                require={requiredFieldLocker}/>
         )
     } else {
         let placeholder = isPublisherSelectedButNotValid ? "L'éditeur sélectionné n'est pas valide" : "Vous devez d'abord sélectionner un éditeur";
@@ -28,7 +29,8 @@ export default function CollectionsInput(props) {
                 name="book_collection"
                 placeholder={placeholder}
                 disabled
-                isInvalid={isPublisherSelectedButNotValid}/>
+                isInvalid={isPublisherSelectedButNotValid}
+                require={requiredFieldLocker}/>
         )
     }
 

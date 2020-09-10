@@ -8,7 +8,7 @@ import labelizer from "../../services/labelizer";
 import useCreateDetailByUrl from "../../../sdk/hooks/useCreateDetailByUrl";
 
 export default function AutocompleteInput(props) {
-    const {detailName, options, value, onMatch, required} = props;
+    const {detailName, options, value, onMatch, requiredFieldLocker} = props;
     const [autocompleteOptions, setAutocompleteOptions] = useState(options);
 
     const createNewResource = useCreateDetailByUrl('/api/' + detailName);
@@ -29,7 +29,7 @@ export default function AutocompleteInput(props) {
                 value={value.name}
                 onCreateNew={onCreateNew}
                 onMatch={onMatch}
-                required={required}/>
+                requiredFieldLocker={requiredFieldLocker}/>
         </Col>
     );
 }
