@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import {Col} from "react-bootstrap";
 
 import {Autocomplete} from "../../../autocomplete";
@@ -8,19 +8,28 @@ import labelizer from "../../services/labelizer";
 import useCreateDetailByUrl from "../../../sdk/hooks/useCreateDetailByUrl";
 
 export default function AutocompleteInput(props) {
-    const {detailName, options, value, onMatch} = props;
+    const {detailName, options, value, onMatch, required} = props;
+    const [autocompleteOptions, setAutocompleteOptions] = useState(options);
 
     const createNewResource = useCreateDetailByUrl('/api/' + detailName);
+
+    async function onCreateNew(inputValue) {
+        const createdRessource = await createNewResource(inputValue);
+        options.push(createdRessource);
+        onMatch(createdRessource);
+        setAutocompleteOptions(options);
+    }
 
     return (
         <Col>
             <Autocomplete
-                options={options}
-                label={labelizer(detailName)}
+                options={autocompleteOptions}
+                label={labelizer(detailName) + ' *'}
                 name={'book_' + detailName}
                 value={value.name}
-                onCreateNew={createNewResource}
-                onMatch={onMatch}/>
+                onCreateNew={onCreateNew}
+                onMatch={onMatch}
+                required={required}/>
         </Col>
     );
 }

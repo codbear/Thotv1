@@ -18,7 +18,12 @@
     <div class="col-4 text-center">
         <h1 class="navbar-brand">Thot</h1>
     </div>
-    <div class="col-4">
+    <div class="col-4 text-right">
+        {% if app.user %}
+            <a class="btn btn-link" href="{{ path('logout') }}" title="Déconnexion">
+                <i class="fas fa-sign-out-alt fa-2x text-dark"></i>
+            </a>
+        {% endif %}
     </div>
 </nav>
 

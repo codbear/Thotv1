@@ -3,7 +3,9 @@ import React from "react";
 export default function AutocompleteDropdownOption({value, onClick, isFocused}) {
     let className = 'autocomplete-option text-dark';
 
-    if (isFocused) className += ' autocomplete-active';
+    if (isFocused) {
+        className += ' autocomplete-active';
+    }
 
     return (
         <li
