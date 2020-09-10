@@ -4,7 +4,7 @@
     "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
     "This file is @generated automatically"
   ],
-  "content-hash": "55d3003562dbf3a0e0fe3c4edb3db204",
+  "content-hash": "8db705b9ab0d93de41b984545f4b0049",
   "packages": [
     {
       "name": "doctrine/annotations",
@@ -15,16 +15,16 @@
         "reference": "b9d758e831c70751155c698c2f7df4665314a1cb"
       },
       "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/doctrine/annotations/zipball/b9d758e831c70751155c698c2f7df4665314a1cb",
-                "reference": "b9d758e831c70751155c698c2f7df4665314a1cb",
-                "shasum": ""
-            },
-            "require": {
-                "doctrine/lexer": "1.*",
-                "ext-tokenizer": "*",
-                "php": "^7.1"
-            },
+        "type": "zip",
+        "url": "https://api.github.com/repos/doctrine/annotations/zipball/b9d758e831c70751155c698c2f7df4665314a1cb",
+        "reference": "b9d758e831c70751155c698c2f7df4665314a1cb",
+        "shasum": ""
+      },
+      "require": {
+        "doctrine/lexer": "1.*",
+        "ext-tokenizer": "*",
+        "php": "^7.1"
+      },
             "require-dev": {
                 "doctrine/cache": "1.*",
                 "phpunit/phpunit": "^7.5"
@@ -2432,16 +2432,16 @@
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Jordi Boggiano",
-                    "email": "j.boggiano@seld.be",
-                    "homepage": "http://seld.be"
-                }
-            ],
+          "license": [
+            "MIT"
+          ],
+          "authors": [
+            {
+              "name": "Jordi Boggiano",
+              "email": "j.boggiano@seld.be",
+              "homepage": "http://seld.be"
+            }
+          ],
           "description": "Sends your logs to files, sockets, inboxes, databases and various web services",
           "homepage": "http://github.com/Seldaek/monolog",
           "keywords": [
@@ -2519,16 +2519,16 @@
       "dist": {
         "type": "zip",
         "url": "https://api.github.com/repos/Ocramius/PackageVersions/zipball/1d32342b8c1eb27353c8887c366147b4c2da673c",
-                "reference": "1d32342b8c1eb27353c8887c366147b4c2da673c",
-                "shasum": ""
-            },
-            "require": {
-                "composer-plugin-api": "^1.0.0",
-                "php": "^7.3.0"
-            },
-            "require-dev": {
-                "composer/composer": "^1.8.6",
-                "doctrine/coding-standard": "^6.0.0",
+        "reference": "1d32342b8c1eb27353c8887c366147b4c2da673c",
+        "shasum": ""
+      },
+      "require": {
+        "composer-plugin-api": "^1.0.0",
+        "php": "^7.3.0"
+      },
+      "require-dev": {
+        "composer/composer": "^1.8.6",
+        "doctrine/coding-standard": "^6.0.0",
                 "ext-zip": "*",
                 "infection/infection": "^0.13.4",
                 "phpunit/phpunit": "^8.2.5",
@@ -7570,17 +7570,149 @@
         }
     ],
     "packages-dev": [
-        {
-            "name": "nikic/php-parser",
-            "version": "v4.4.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/nikic/PHP-Parser.git",
-                "reference": "bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120",
+      {
+        "name": "doctrine/data-fixtures",
+        "version": "1.4.3",
+        "source": {
+          "type": "git",
+          "url": "https://github.com/doctrine/data-fixtures.git",
+          "reference": "7ebac50901eb4516816ac39100dba1759d843943"
+        },
+        "dist": {
+          "type": "zip",
+          "url": "https://api.github.com/repos/doctrine/data-fixtures/zipball/7ebac50901eb4516816ac39100dba1759d843943",
+          "reference": "7ebac50901eb4516816ac39100dba1759d843943",
+          "shasum": ""
+        },
+        "require": {
+          "doctrine/common": "^2.11",
+          "doctrine/persistence": "^1.3.3",
+          "php": "^7.2 || ^8.0"
+        },
+        "conflict": {
+          "doctrine/phpcr-odm": "<1.3.0"
+        },
+        "require-dev": {
+          "alcaeus/mongo-php-adapter": "^1.1",
+          "doctrine/coding-standard": "^6.0",
+          "doctrine/dbal": "^2.5.4",
+          "doctrine/mongodb-odm": "^1.3.0",
+          "doctrine/orm": "^2.7.0",
+          "phpunit/phpunit": "^7.0"
+        },
+        "suggest": {
+          "alcaeus/mongo-php-adapter": "For using MongoDB ODM with PHP 7",
+          "doctrine/mongodb-odm": "For loading MongoDB ODM fixtures",
+          "doctrine/orm": "For loading ORM fixtures",
+          "doctrine/phpcr-odm": "For loading PHPCR ODM fixtures"
+        },
+        "type": "library",
+        "extra": {
+          "branch-alias": {
+            "dev-master": "1.4.x-dev"
+          }
+        },
+        "autoload": {
+          "psr-4": {
+            "Doctrine\\Common\\DataFixtures\\": "lib/Doctrine/Common/DataFixtures"
+          }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+          "MIT"
+        ],
+        "authors": [
+          {
+            "name": "Jonathan Wage",
+            "email": "jonwage@gmail.com"
+          }
+        ],
+        "description": "Data Fixtures for all Doctrine Object Managers",
+        "homepage": "http://www.doctrine-project.org",
+        "keywords": [
+          "database"
+        ],
+        "time": "2020-05-25T19:45:03+00:00"
+      },
+      {
+        "name": "doctrine/doctrine-fixtures-bundle",
+        "version": "3.3.2",
+        "source": {
+          "type": "git",
+          "url": "https://github.com/doctrine/DoctrineFixturesBundle.git",
+          "reference": "a2179f447425d9e784fb9bc224e533a0ab083b98"
+        },
+        "dist": {
+          "type": "zip",
+          "url": "https://api.github.com/repos/doctrine/DoctrineFixturesBundle/zipball/a2179f447425d9e784fb9bc224e533a0ab083b98",
+          "reference": "a2179f447425d9e784fb9bc224e533a0ab083b98",
+          "shasum": ""
+        },
+        "require": {
+          "doctrine/data-fixtures": "^1.3",
+          "doctrine/doctrine-bundle": "^1.11|^2.0",
+          "doctrine/orm": "^2.6.0",
+          "doctrine/persistence": "^1.3|^2.0",
+          "php": "^7.1 || ^8.0",
+          "symfony/config": "^3.4|^4.3|^5.0",
+          "symfony/console": "^3.4|^4.3|^5.0",
+          "symfony/dependency-injection": "^3.4|^4.3|^5.0",
+          "symfony/doctrine-bridge": "^3.4|^4.1|^5.0",
+          "symfony/http-kernel": "^3.4|^4.3|^5.0"
+        },
+        "require-dev": {
+          "doctrine/coding-standard": "^6.0",
+          "phpunit/phpunit": "^7.4 || ^9.2",
+          "symfony/phpunit-bridge": "^4.1|^5.0"
+        },
+        "type": "symfony-bundle",
+        "extra": {
+          "branch-alias": {
+            "dev-master": "3.3.x-dev"
+          }
+        },
+        "autoload": {
+          "psr-4": {
+            "Doctrine\\Bundle\\FixturesBundle\\": ""
+          }
+        },
+        "notification-url": "https://packagist.org/downloads/",
+        "license": [
+          "MIT"
+        ],
+        "authors": [
+          {
+            "name": "Fabien Potencier",
+            "email": "fabien@symfony.com"
+          },
+          {
+            "name": "Doctrine Project",
+            "homepage": "http://www.doctrine-project.org"
+          },
+          {
+            "name": "Symfony Community",
+            "homepage": "http://symfony.com/contributors"
+          }
+        ],
+        "description": "Symfony DoctrineFixturesBundle",
+        "homepage": "http://www.doctrine-project.org",
+        "keywords": [
+          "Fixture",
+          "persistence"
+        ],
+        "time": "2020-09-01T07:06:14+00:00"
+      },
+      {
+        "name": "nikic/php-parser",
+        "version": "v4.4.0",
+        "source": {
+          "type": "git",
+          "url": "https://github.com/nikic/PHP-Parser.git",
+          "reference": "bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120"
+        },
+        "dist": {
+          "type": "zip",
+          "url": "https://api.github.com/repos/nikic/PHP-Parser/zipball/bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120",
                 "reference": "bd43ec7152eaaab3bd8c6d0aa95ceeb1df8ee120",
                 "shasum": ""
             },
