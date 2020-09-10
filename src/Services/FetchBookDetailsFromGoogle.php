@@ -23,12 +23,12 @@ class FetchBookDetailsFromGoogle implements BookDetailsFetcherInterface
 
         if ($results->totalItems > 0) {
             $bookDetails = $results->items[0];
-            $book->setTitle($bookDetails->volumeInfo->title ?? null);
-            $book->setDescription($bookDetails->volumeInfo->description ?? null);
+            $book->setTitle($bookDetails->volumeInfo->title ?? '');
+            $book->setDescription($bookDetails->volumeInfo->description ?? '');
             $book->setPublicationYear((int)substr($bookDetails->volumeInfo->publishedDate, 0, 4) ?? null);
-            $author->setName($bookDetails->volumeInfo->authors[0] ?? null);
+            $author->setName($bookDetails->volumeInfo->authors[0] ?? '');
             $book->setAuthor($author);
-            $publisher->setName($bookDetails->volumeInfo->publisher ?? null);
+            $publisher->setName($bookDetails->volumeInfo->publisher ?? '');
             $book->setPublisher($publisher);
         }
 

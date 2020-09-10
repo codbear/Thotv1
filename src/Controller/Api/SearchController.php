@@ -36,10 +36,10 @@ class SearchController extends AbstractController
         $book = new BookDTO();
         $fromGoogle = $googleFetcher->request($isbn);
         $fromBookfinder = $bookfinderFetcher->request($isbn);
-        $book->setTitle($fromGoogle->getTitle() !== null ? $fromGoogle->getTitle() : $fromBookfinder->getTitle());
-        $book->setAuthor($fromGoogle->getAuthor()->getName() !== null ? $fromGoogle->getAuthor() : $fromBookfinder->getAuthor());
-        $book->setDescription($fromGoogle->getDescription() !== null ? $fromGoogle->getDescription() : $fromBookfinder->getDescription());
-        $book->setPublisher($fromGoogle->getPublisher()->getName() !== null ? $fromGoogle->getPublisher() : $fromBookfinder->getPublisher());
+        $book->setTitle($fromGoogle->getTitle() !== '' ? $fromGoogle->getTitle() : $fromBookfinder->getTitle());
+        $book->setAuthor($fromGoogle->getAuthor()->getName() !== '' ? $fromGoogle->getAuthor() : $fromBookfinder->getAuthor());
+        $book->setDescription($fromGoogle->getDescription() !== '' ? $fromGoogle->getDescription() : $fromBookfinder->getDescription());
+        $book->setPublisher($fromGoogle->getPublisher()->getName() !== '' ? $fromGoogle->getPublisher() : $fromBookfinder->getPublisher());
         $book->setPublicationYear($fromGoogle->getPublicationYear() !== null ? $fromGoogle->getPublicationYear() : $fromBookfinder->getPublicationYear());
 
         return $book;
