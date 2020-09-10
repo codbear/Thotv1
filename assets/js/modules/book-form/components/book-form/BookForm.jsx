@@ -85,7 +85,7 @@ export default function BookForm({book}) {
     ] = highLevelDetailsQuery.data || [];
 
     function reloadForm() {
-        setFormStatus('loading');
+        setFormStatus('success');
     }
 
     function resetForm() {
