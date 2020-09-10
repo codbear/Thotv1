@@ -4,15 +4,16 @@ import {Button, Col, Form, InputGroup} from "react-bootstrap";
 import isbnChecker from "./services/isbnChecker";
 
 export default function IsbnFetcherInput(props) {
-    const {value, onFetch} = props;
+    const {value, onFetch, onChange} = props;
     const [isbnInputValue, setIsbnInputValue] = useState(value);
     const [inputStatus, setInputStatus] = useState('waiting');
     const [invalidFeedbackMessage, setInvalidFeedbackMessage] = useState('');
 
-    function onChange(event) {
+    function handleChange(event) {
         const newIsbnInputValue = event.target.value;
         setIsbnInputValue(newIsbnInputValue);
-        setInputStatus(isbnChecker(newIsbnInputValue) ? 'valid' : 'invalid')
+        setInputStatus(isbnChecker(newIsbnInputValue) ? 'valid' : 'invalid');
+        onChange(event.target.value);
     }
 
     function onClick() {
@@ -43,7 +44,7 @@ export default function IsbnFetcherInput(props) {
                     id="book_isbn"
                     type="text"
                     value={isbnInputValue}
-                    onChange={onChange}/>
+                    onChange={handleChange}/>
                 <InputGroup.Append>
                     <Button
                         id="isbnSearchBtn"

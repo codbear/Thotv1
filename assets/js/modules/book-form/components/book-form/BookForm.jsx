@@ -1,5 +1,5 @@
 /* Dependencies */
-import React, {useReducer, useState} from 'react';
+import React, {useCallback, useReducer, useState} from 'react';
 import {useQuery} from 'react-query';
 import {Col, Form, Image, Row} from 'react-bootstrap';
 
@@ -27,6 +27,8 @@ import highLevelDetailsReducer from "../../reducers/highLevelDetailsReducer";
 
 /* Styles */
 import './styles/bookForm.scss'
+import requiredFieldsStatusReducer from "./reducers/requiredFieldsStatusReducer";
+
 
 export default function BookForm({book}) {
     const [formStatus, setFormStatus] = useState('loading');
@@ -38,6 +40,28 @@ export default function BookForm({book}) {
         publisher: undefined
     });
     const [bookDetails, dispatchBookDetails] = useReducer(bookDetailsReducer, book);
+    const requiredFieldsAreNotEmpty = {
+        title: Boolean(book.title),
+        author: Boolean(book.author.name),
+        genre: Boolean(book.genre.name),
+        publisher: Boolean(book.publisher.name),
+        collection: true,//todo
+        format: Boolean(book.format.name),
+    }
+    const [requiredFieldsStatus, dispatchRequiredFieldStatus] = useReducer(requiredFieldsStatusReducer, requiredFieldsAreNotEmpty);
+
+    const canSubmit = useCallback(() => {
+        return requiredFieldsStatus.title
+            && requiredFieldsStatus.author
+            && requiredFieldsStatus.genre
+            && requiredFieldsStatus.publisher
+            && requiredFieldsStatus.collection
+            && requiredFieldsStatus.format;
+    }, [requiredFieldsStatus])
+
+    function getRequiredFieldStatusDispatcher(actionType) {
+        return (payload) => dispatchRequiredFieldStatus({type: actionType, payload: payload});
+    }
 
     function getBookDetailsDispatcherForAction(actionType) {
         return (payload) => dispatchBookDetails({type: actionType, payload: payload});
@@ -52,7 +76,7 @@ export default function BookForm({book}) {
             apiFetcher('/api/genres'),
             apiFetcher('/api/publishers'),
             apiFetcher('/api/formats'),
-            ]), {
+        ]), {
             onSuccess: () => {
                 setFormStatus('success')
             },
@@ -85,8 +109,12 @@ export default function BookForm({book}) {
     }
 
     async function onSubmit() {
+        if (!canSubmit()) {
+            return;
+        }
         try {
             let mutateBook;
+
             if (bookDetails.id) {
                 mutateBook = await updateBook(bookDetails);
 
@@ -104,7 +132,7 @@ export default function BookForm({book}) {
                     throw new Error('Une erreur est survenue lors de l\'ajout du livre, veuillez réessayer');
                 }
 
-                setMessage('Le livre a été ajouté à votre bibliothèque. Que voulez-vous faire maintenant ?');
+                setMessage('Le livre a été ajouté à votre bibliothèque.');
 
                 return setFormStatus('bookSuccessfullyCreated');
             }
@@ -117,10 +145,9 @@ export default function BookForm({book}) {
     async function onIsbnFetch(isbn) {
         setFormStatus('loading');
         setIsbnToFetch(isbn);
+
         try {
             let fetchedDetails = await isbnFetcher(isbn);
-
-            console.log(fetchedDetails);
 
             if (fetchedDetails.title === null) {
                 throw new Error('Aucun résultat disponible pour le numéro ISBN fourni.');
@@ -188,22 +215,29 @@ export default function BookForm({book}) {
 
     function onHldCreation(createdDetails) {
         const {author, publisher, genre} = createdDetails;
+
         if (author) {
             dispatchBookDetails({type: 'setAuthor', payload: author});
         }
+
         if (publisher) {
             dispatchBookDetails({type: 'setPublisher', payload: publisher});
         }
+
         if (genre) {
             dispatchBookDetails({type: 'setGenre', payload: genre});
         }
+
         return setFormStatus('success');
     }
 
-    let bookCoverImageSrc = '/img/book_cover_placeholder.png'
+    let bookCoverImageSrc = '/img/book_cover_placeholder.png';
+
     if (bookDetails.isbn) {
         bookCoverImageSrc = "https://pictures.abebooks.com/isbn/" + bookDetails.isbn + "-us-300.jpg"
     }
+
+    console.log(bookDetails);
 
     const statusToContent = {
         isbnError: (
@@ -264,37 +298,42 @@ export default function BookForm({book}) {
                             <Row>
                                 <FormGroup
                                     name="book_title"
-                                    label="Titre"
+                                    label="Titre *"
                                     type="text"
                                     value={bookDetails.title}
-                                    onChange={getBookDetailsDispatcherForAction('setTitle')}/>
+                                    onChange={getBookDetailsDispatcherForAction('setTitle')}
+                                    required={getRequiredFieldStatusDispatcher('setTitleStatus')}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
                                     detailName="authors"
                                     options={authorsIndex}
                                     value={bookDetails.author}
-                                    onMatch={getBookDetailsDispatcherForAction('setAuthor')}/>
+                                    onMatch={getBookDetailsDispatcherForAction('setAuthor')}
+                                    required={getRequiredFieldStatusDispatcher('setAuthorStatus')}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
                                     detailName="genres"
                                     options={genresIndex}
                                     value={bookDetails.genre}
-                                    onMatch={getBookDetailsDispatcherForAction('setGenre')}/>
+                                    onMatch={getBookDetailsDispatcherForAction('setGenre')}
+                                    required={getRequiredFieldStatusDispatcher('setGenreStatus')}/>
                             </Row>
                             <Row>
                                 <AutocompleteInput
                                     detailName="publishers"
                                     options={publishersIndex}
                                     value={bookDetails.publisher}
-                                    onMatch={getBookDetailsDispatcherForAction('setPublisher')}/>
+                                    onMatch={getBookDetailsDispatcherForAction('setPublisher')}
+                                    required={getRequiredFieldStatusDispatcher('setPublisherStatus')}/>
                             </Row>
                             <Row>
                                 <CollectionsInput
                                     value={bookDetails.collection}
                                     onMatch={getBookDetailsDispatcherForAction('setCollection')}
-                                    publisher={bookDetails.publisher}/>
+                                    publisher={bookDetails.publisher}
+                                    required={getRequiredFieldStatusDispatcher('setCollectionStatus')}/>
                             </Row>
                             <Row>
                                 <FormGroup
@@ -315,7 +354,8 @@ export default function BookForm({book}) {
                                     detailName="formats"
                                     options={formatsIndex}
                                     value={bookDetails.format}
-                                    onMatch={getBookDetailsDispatcherForAction('setFormat')}/>
+                                    onMatch={getBookDetailsDispatcherForAction('setFormat')}
+                                    required={getRequiredFieldStatusDispatcher('setFormatStatus')}/>
                             </Row>
                             <Row>
                                 <FormGroup
@@ -334,7 +374,14 @@ export default function BookForm({book}) {
                                     onChange={getBookDetailsDispatcherForAction('setObservations')}/>
                             </Row>
                             <Row>
-                                <SubmitButton onSubmit={onSubmit}/>
+                                <Col>
+                                    <SubmitButton onSubmit={onSubmit} disabled={!canSubmit()}/>
+                                </Col>
+                            </Row>
+                            <Row>
+                                <Col>
+                                    <p>Les champs marqués d'un * sont obligatoires.</p>
+                                </Col>
                             </Row>
                         </Col>
                     </Row>

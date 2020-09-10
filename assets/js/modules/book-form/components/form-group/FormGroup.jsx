@@ -3,10 +3,16 @@ import {Col, Form} from "react-bootstrap";
 import PropTypes from "prop-types";
 
 export default function FormGroup(props) {
-    const {name, label, type, value, rows, onChange} = props;
+    const {name, label, type, value, rows, onChange, required} = props;
     const [inputValue, setInputValue] = useState(value || '');
 
     function handleChange(event) {
+        if (required) {
+            required(false);
+            if (event.target.value !== '') {
+                required(true);
+            }
+        }
         const newInputValue = event.target.value;
         onChange(newInputValue);
         setInputValue(newInputValue);
@@ -16,7 +22,8 @@ export default function FormGroup(props) {
         <Form.Control
             type={type}
             value={inputValue}
-            onChange={handleChange}/>
+            onChange={handleChange}
+            required={Boolean(required)}/>
     )
 
     if (type === 'textarea') {
@@ -25,7 +32,8 @@ export default function FormGroup(props) {
                 as="textarea"
                 rows={rows}
                 value={inputValue}
-                onChange={handleChange}/>
+                onChange={handleChange}
+                required={Boolean(required)}/>
         )
     }
 

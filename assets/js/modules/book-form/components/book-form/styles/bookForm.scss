@@ -4,3 +4,11 @@
   bottom: 0;
   padding-top: 5%;
 }
+
+form, button {
+  margin-bottom: 3%;
+}
+
+.btn-primary:disabled {
+  cursor: not-allowed;
+}

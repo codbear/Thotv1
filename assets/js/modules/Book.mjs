@@ -70,29 +70,32 @@ class Book {
         this.details.$title = this.modalBox.$wrapper.querySelector('.bookTitle');
         this.details.$title.textContent = book.title;
         this.details.$author = this.modalBox.$wrapper.querySelector('.bookAuthor');
-        this.details.$author.textContent = book.author;
+        this.details.$author.textContent = book.author.name;
         this.details.$publisher = this.modalBox.$wrapper.querySelector('.bookPublisher');
-        this.details.$publisher.textContent = book.publisher;
+        this.details.$publisher.textContent = book.publisher.name;
         this.details.$collection = this.modalBox.$wrapper.querySelector('.bookCollection');
-        this.details.$collection.textContent = book.collection;
+        this.details.$collection.textContent = book.collection.name;
         this.details.$genre = this.modalBox.$wrapper.querySelector('.bookGenre');
-        this.details.$genre.textContent = book.genre;
+        this.details.$genre.textContent = book.genre.name;
         this.details.$format = this.modalBox.$wrapper.querySelector('.bookFormat');
-        this.details.$format.textContent = book.format;
+        this.details.$format.textContent = book.format.name;
         this.details.$summary = this.modalBox.$wrapper.querySelector('.bookSummary');
         this.details.$summary.textContent = book.description;
         this.details.$isbn = this.modalBox.$wrapper.querySelector('.bookIsbn');
         this.details.$isbn.textContent = book.isbn;
         this.details.$volume = this.modalBox.$wrapper.querySelector('.bookVolume');
-        this.details.$volume.textContent = book.volume;
+        this.details.$volume.textContent = book.volume > 0 ? book.volume : '';
         this.details.$observations = this.modalBox.$wrapper.querySelector('.bookObservations');
         this.details.$observations.textContent = book.observations;
         this.details.$publicationDate = this.modalBox.$wrapper.querySelector('.bookPublicationDate');
         this.details.$publicationDate.textContent = book.publication_year;
         this.details.$hasBeenRead = this.modalBox.$wrapper.querySelector('.bookHasBeenRead');
-        this.details.$hasBeenRead.textContent = book.has_been_read;
+        this.details.$hasBeenRead.textContent = book.has_been_read ? 'Oui' : 'Non';
         this.details.$isDematerialized = this.modalBox.$wrapper.querySelector('.bookIsDematerialized');
-        this.details.$isDematerialized.textContent = book.is_ebook;
+        this.details.$isDematerialized.textContent = book.is_ebook ? 'Oui' : 'Non';
+        this.details.$bookCover = this.modalBox.$wrapper.querySelector('.card-img-top');
+        console.log(this.details.$bookCover);
+        this.details.$bookCover.src = 'https://pictures.abebooks.com/isbn/' + book.isbn + '-us-300.jpg';
     }
 
     setErrorMessage(level, message = '', tryAgain = () => {
