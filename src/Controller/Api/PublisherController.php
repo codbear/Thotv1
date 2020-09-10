@@ -31,7 +31,6 @@ class PublisherController extends AbstractController
      * @Rest\Post("/api/publishers")
      * @Rest\RequestParam(
      *     name="name",
-     *     requirements="[a-zA-Z,.\-\ ]{3,}",
      *     nullable=false
      * )
      * @ParamConverter("publisher", converter="fos_rest.request_body")
@@ -75,7 +74,6 @@ class PublisherController extends AbstractController
      * )
      * @Rest\RequestParam(
      *     name="name",
-     *     requirements="[a-zA-Z,.\-\ ]{3,}",
      *     nullable=false
      * )
      * @ParamConverter("editedPublisher", converter="fos_rest.request_body")

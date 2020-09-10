@@ -56,7 +56,6 @@ class CollectionController extends AbstractController
      * )
      * @Rest\RequestParam(
      *     name="name",
-     *     requirements="[a-zA-Z,.\-\ ]{3,}",
      *     nullable=false
      * )
      * @ParamConverter("collection", converter="fos_rest.request_body")
@@ -103,7 +102,6 @@ class CollectionController extends AbstractController
      * )
      * @Rest\RequestParam(
      *     name="name",
-     *     requirements="[a-zA-Z,.\-\ ]{3,}",
      *     nullable=false
      * )
      * @ParamConverter("editedCollection", converter="fos_rest.request_body")
