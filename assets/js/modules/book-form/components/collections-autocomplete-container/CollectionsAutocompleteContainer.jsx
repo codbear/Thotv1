@@ -1,22 +1,29 @@
-import React from "react";
-import {useMutation, useQuery} from "react-query";
+import React, {useState} from "react";
+import {useQuery} from "react-query";
 import apiFetcher from "../../../../services/apiFetcher";
 import {Autocomplete} from "../../../autocomplete";
+import useCreateDetailByUrl from "../../../sdk/hooks/useCreateDetailByUrl";
 
 export default function CollectionsAutocompleteContainer(props) {
     const {publisherId, onMatch, value, requiredFieldLocker} = props;
+    const [autocompleteOptions, setAutocompleteOptions] = useState([]);
     const resourceUrl = '/api/publishers/' + publisherId + '/collections';
 
-    const {status, data} = useQuery(publisherId && ['collections', publisherId], () =>
-        apiFetcher(resourceUrl)
+    const collectionQuery = useQuery(
+        publisherId && ['collections', publisherId],
+        () => apiFetcher(resourceUrl),
+        {
+            onSuccess: (data) => setAutocompleteOptions(data),
+        }
     );
 
-    const [mutate] = useMutation(({value}) => {
-        apiFetcher(resourceUrl, 'POST', {name: value})
-    });
+    const createNewResource = useCreateDetailByUrl(resourceUrl);
 
-    async function createNewResource(value) {
-        await mutate({value})
+    async function onCreateNew(inputValue) {
+        const createdRessource = await createNewResource(inputValue);
+        collectionQuery.data.push(createdRessource);
+        onMatch(createdRessource);
+        setAutocompleteOptions(collectionQuery.data);
     }
 
     const statusToContent = {
@@ -30,22 +37,20 @@ export default function CollectionsAutocompleteContainer(props) {
         ),
         success: (
             <Autocomplete
-                options={data}
+                options={autocompleteOptions}
                 label="Collection *"
                 name="book_collection"
                 value={value.name || ''}
-                onCreateNew={createNewResource}
-                onMatch={onMatch}
-                required={requiredFieldLocker}/>
+                onCreateNew={onCreateNew}
+                onMatch={onMatch}/>
         ),
         error: (
             <Autocomplete
                 label="Collection *"
                 name="book_collection"
                 placeholder="Erreur !"
-                disabled
-                required={requiredFieldLocker}/>
+                disabled/>
         ),
     }
-    return statusToContent[status] || statusToContent.error;
+    return statusToContent[collectionQuery.status] || statusToContent.error;
 }
