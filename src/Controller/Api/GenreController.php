@@ -29,7 +29,6 @@ class GenreController extends AbstractController
      * @Rest\Post("/api/genres")
      * @Rest\RequestParam(
      *     name="name",
-     *     requirements="[a-zA-Z,.\-\ ]{3,}",
      *     nullable=false
      * )
      * @ParamConverter("genre", converter="fos_rest.request_body")
@@ -67,7 +66,6 @@ class GenreController extends AbstractController
      * )
      * @Rest\RequestParam(
      *     name="name",
-     *     requirements="[a-zA-Z,.\-\ ]{3,}",
      *     nullable=false
      * )
      * @ParamConverter("editedGenre", converter="fos_rest.request_body")

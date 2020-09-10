@@ -29,7 +29,6 @@ class FormatController extends AbstractController
      * @Rest\Post("/api/formats")
      * @Rest\RequestParam(
      *     name="name",
-     *     requirements="[a-zA-Z,.\-\ ]{3,}",
      *     nullable=false
      * )
      * @ParamConverter("format", converter="fos_rest.request_body")
@@ -67,7 +66,6 @@ class FormatController extends AbstractController
      * )
      * @Rest\RequestParam(
      *     name="name",
-     *     requirements="[a-zA-Z,.\-\ ]{3,}",
      *     nullable=false
      * )
      * @ParamConverter("editedFormat", converter="fos_rest.request_body")
