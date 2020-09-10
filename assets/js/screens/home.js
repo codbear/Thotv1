@@ -9,6 +9,8 @@ const $bookCardsCollection = document.querySelectorAll('.book-card');
 
 $bookCardsCollection.forEach(($bookCard) => {
     let bookId = $bookCard.dataset.bookid;
+    const $bookCover = $bookCard.querySelector('.card-img-top');
+    $bookCover.onerror = () => $bookCover.src = 'img/book_cover_placeholder.png';
     $bookCard.addEventListener('click', (e) => {
         e.preventDefault();
         let request = book.fetch(bookId);
