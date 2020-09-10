@@ -94,7 +94,7 @@ class Book {
         this.details.$isDematerialized = this.modalBox.$wrapper.querySelector('.bookIsDematerialized');
         this.details.$isDematerialized.textContent = book.is_ebook ? 'Oui' : 'Non';
         this.details.$bookCover = this.modalBox.$wrapper.querySelector('.card-img-top');
-        console.log(this.details.$bookCover);
+        this.details.$bookCover.onerror = () => this.details.$bookCover.src = '/img/book_cover_placeholder.png';
         this.details.$bookCover.src = 'https://pictures.abebooks.com/isbn/' + book.isbn + '-us-300.jpg';
     }
 

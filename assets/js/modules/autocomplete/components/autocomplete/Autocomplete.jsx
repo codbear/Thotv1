@@ -8,7 +8,7 @@ import AutocompleteDropdown from "../autocomplete-dropdown/AutocompleteDropdown"
 import './styles/autocomplete.scss';
 
 export default function Autocomplete(props) {
-    const {options, label, name, value, placeholder, required, disabled, onMatch, onChange, onCreateNew, isInvalid} = props
+    const {options, label, name, value, placeholder, disabled, onMatch, onChange, onCreateNew, isInvalid} = props
     const [suggestions, setSuggestions] = useState({all: [], matching: null});
     const [inputValue, setInputValue] = useState(value);
     const [focusIndex, setFocusIndex] = useState(-1);
@@ -26,12 +26,6 @@ export default function Autocomplete(props) {
     }
 
     const handleChange = (event) => {
-        if (required) {
-            required(false);
-            if (event.target.value !== '') {
-                required(true);
-            }
-        }
         const [matchingOptions, perfectlyMatchingOptions] = filterMatchingOptions(event.target.value, options);
         setSuggestions({all: matchingOptions, matching: perfectlyMatchingOptions[0]});
         setInputValue(event.target.value);
@@ -101,7 +95,6 @@ export default function Autocomplete(props) {
                 placeholder={placeholder}
                 className={className}
                 value={inputValue || ''}
-                required={Boolean(required)}
                 disabled={disabled}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}/>
