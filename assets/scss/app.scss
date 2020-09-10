@@ -41,6 +41,12 @@ h6 {
     font-size: large;
 }
 
+.modal-label {
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 1.1em;
+}
+
 @media (min-width: 1200px) {
     .card-deck .card {
         width: 22%;
