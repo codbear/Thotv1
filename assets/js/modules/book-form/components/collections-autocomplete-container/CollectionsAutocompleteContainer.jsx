@@ -1,21 +1,15 @@
-import React, {useEffect} from "react";
+import React from "react";
 import {useMutation, useQuery} from "react-query";
 import apiFetcher from "../../../../services/apiFetcher";
 import {Autocomplete} from "../../../autocomplete";
 
 export default function CollectionsAutocompleteContainer(props) {
-    const {publisherId, onError, onMatch} = props;
+    const {publisherId, onMatch, value, required} = props;
     const resourceUrl = '/api/publishers/' + publisherId + '/collections';
 
-    const {status, data, error} = useQuery(publisherId && ['collections', publisherId], () =>
+    const {status, data} = useQuery(publisherId && ['collections', publisherId], () =>
         apiFetcher(resourceUrl)
     );
-
-    useEffect(() => {
-        if (error) {
-            onError(error);
-        }
-    }, [error, onError])
 
     const [mutate] = useMutation(({value}) => {
         apiFetcher(resourceUrl, 'POST', {name: value})
@@ -28,25 +22,29 @@ export default function CollectionsAutocompleteContainer(props) {
     const statusToContent = {
         loading: (
             <Autocomplete
-                label="Collection"
+                label="Collection *"
                 name="book_collection"
                 placeholder="Chargement..."
-                disabled/>
+                disabled
+                required={required}/>
         ),
         success: (
             <Autocomplete
                 options={data}
-                label="Collection"
+                label="Collection *"
                 name="book_collection"
+                value={value.name || ''}
                 onCreateNew={createNewResource}
-                onMatch={onMatch}/>
+                onMatch={onMatch}
+                required={required}/>
         ),
         error: (
             <Autocomplete
-                label="Collection"
+                label="Collection *"
                 name="book_collection"
                 placeholder="Erreur !"
-                disabled/>
+                disabled
+                required={required}/>
         ),
     }
     return statusToContent[status] || statusToContent.error;
