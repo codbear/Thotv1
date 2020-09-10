@@ -18,13 +18,13 @@ class FetchBookDetailsFromBookfinder implements BookDetailsFetcherInterface
         $book = new BookDTO();
         $author = new Author();
         $publisher = new Publisher();
-        $book->setTitle($html->find('[itemprop=name]', 0)->plaintext ?? null);
-        $author->setName($html->find('[itemprop=author]', 0)->plaintext ?? null);
+        $book->setTitle($html->find('[itemprop=name]', 0)->plaintext ?? '');
+        $author->setName($html->find('[itemprop=author]', 0)->plaintext ?? '');
         $book->setAuthor($author);
-        $book->setDescription($html->find('[itemprop=description]', 0)->plaintext ?? null);
-        $publisherElement = $html->find('[itemprop=publisher]', 0)->plaintext ?? null;
+        $book->setDescription($html->find('[itemprop=description]', 0)->plaintext ?? '');
+        $publisherElement = $html->find('[itemprop=publisher]', 0)->plaintext ?? '';
 
-        if ($publisherElement) {
+        if ($publisherElement !== '') {
             $explodedPublisherString = explode(",", $publisherElement);
             $publisher->setName($explodedPublisherString[0]);
             $book->setPublisher($publisher);

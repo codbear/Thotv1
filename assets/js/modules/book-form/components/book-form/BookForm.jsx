@@ -381,7 +381,7 @@ export default function BookForm({book}) {
 BookForm.defaultProps = {
     book: {
         id: '',
-        isbn: '9782744315930',
+        isbn: '',
         title: '',
         volume: '',
         author: {
