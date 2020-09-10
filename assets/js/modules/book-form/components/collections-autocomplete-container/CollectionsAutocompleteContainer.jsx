@@ -4,7 +4,7 @@ import apiFetcher from "../../../../services/apiFetcher";
 import {Autocomplete} from "../../../autocomplete";
 
 export default function CollectionsAutocompleteContainer(props) {
-    const {publisherId, onMatch, value, required} = props;
+    const {publisherId, onMatch, value, requiredFieldLocker} = props;
     const resourceUrl = '/api/publishers/' + publisherId + '/collections';
 
     const {status, data} = useQuery(publisherId && ['collections', publisherId], () =>
@@ -26,7 +26,7 @@ export default function CollectionsAutocompleteContainer(props) {
                 name="book_collection"
                 placeholder="Chargement..."
                 disabled
-                required={required}/>
+                required={requiredFieldLocker}/>
         ),
         success: (
             <Autocomplete
@@ -36,7 +36,7 @@ export default function CollectionsAutocompleteContainer(props) {
                 value={value.name || ''}
                 onCreateNew={createNewResource}
                 onMatch={onMatch}
-                required={required}/>
+                required={requiredFieldLocker}/>
         ),
         error: (
             <Autocomplete
@@ -44,7 +44,7 @@ export default function CollectionsAutocompleteContainer(props) {
                 name="book_collection"
                 placeholder="Erreur !"
                 disabled
-                required={required}/>
+                required={requiredFieldLocker}/>
         ),
     }
     return statusToContent[status] || statusToContent.error;
